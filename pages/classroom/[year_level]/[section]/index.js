@@ -42,6 +42,7 @@ export default function ClassRoom() {
         loadingComponent={<p>loading ...</p>}
         errorComponent={<p>Oops, something went wrong</p>}
          onMeetingEnd={()=>router.push({pathname:'/dashboard'})}
+         
         configOverwrite={{
           "add-people.disabled": false,
           "invite.enabled":false,
