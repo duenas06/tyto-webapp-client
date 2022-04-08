@@ -30,9 +30,9 @@ export default function ClassRoom() {
       {
         startMeeting && <Jutsu
         // all values will come from the server
-        roomName={'PROGMMING'} // will define where they will enter
-        displayName={'FIXED_NAME_FROM_API'} // users display name
-        subject={'PROGRAMMING'} // subject name
+        roomName={'Mobile Application Development'} // will define where they will enter
+        // displayName={'FIXED_NAME_FROM_API'} // users display name
+        subject={'Mobile Application Development'} // subject name
         // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
         // end
         containerStyles={{
