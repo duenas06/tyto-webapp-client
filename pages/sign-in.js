@@ -10,10 +10,15 @@ import {
   Center,
   useDisclosure,
   ScaleFade,
+  useToast 
 } from "@chakra-ui/react";
 import Router, { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Circles } from "react-loader-spinner";
+import { db } from "../firebase";
+import UserDataContext from "../context/UserDataContext";
+import { collection, getDocs, getDoc, where, query } from "@firebase/firestore";
+
 
 const IndexNavBar = (props) => {
   return (
@@ -48,19 +53,8 @@ const IndexNavBar = (props) => {
   );
 };
 
-const Form = ()=>{
-  const [hidePassword,setHidePassword] = useState(true)
-  return (
-    <VStack alignItems={"stretch"}>
-      <Input placeholder={"Account ID"} variant="filled" />
-      <Input placeholder={"Password"} variant="filled" type={hidePassword?"password":"text"} />
-      <HStack justifyContent={"flex-end"}>
-        <Text fontSize="xs">Show Password</Text>
-        <Switch paddingTop={"1"} colorScheme={"teal"} size={"md"} onChange={()=>setHidePassword(!hidePassword)}/>
-      </HStack>
-    </VStack>
-  )
-};
+
+
 const AdminSupport = (
   <HStack wrap={"wrap"} justifyContent={"center"} paddingY={"5"}>
     <Text>{"Can't sign in?"}</Text>
@@ -74,7 +68,53 @@ const AdminSupport = (
   </HStack>
 );
 const SignInForm = (props) => {
+  const userDataContext = useContext(UserDataContext);
   const router = useRouter();
+  const toast = useToast();
+  const [accountEmail, setAccountEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [hidePassword,setHidePassword] = useState(true)
+
+  async function verifyLogin(){
+    const verify_ref = query(collection(db,
+      "accounts_teacher"), where("email", "==", accountEmail))
+
+      const account = [];
+      const verification = await getDocs(verify_ref);
+      verification.docs.map((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+          if(doc.data().length != 0 && doc.data().password == password) {
+            router.push({ 
+              pathname: "/dashboard",
+            })
+            toast({
+              title: "Log in successful",
+              description: "Loading dashboard...",
+              status: "success",
+              duration: 2500,
+              isClosable: true,
+              position: "bottom-right",
+            });
+            userDataContext.setUserData({
+              dataObject: account,
+            });
+          }
+          else
+          {
+            toast({
+              title: "Log in failed",
+              description: "invalid input",
+              status: "error",
+              duration: 2500,
+              isClosable: true,
+              position: "bottom-right",
+            });
+            
+          }
+      })
+      setAccountEmail("");
+      setPassword("");
+  }
   return (
     <ScaleFade initialScale={0.9} in={props.isOpen}>
       <Center>
@@ -95,17 +135,20 @@ const SignInForm = (props) => {
           <Box height={"2"} />
           <Box bg="tyto_teal" padding="1px" width="30%" borderRadius="full" />
           <Box height={"2"} />
-          <Form/>
+          <VStack alignItems={"stretch"}>
+          <Input placeholder={"Account Email"} variant="filled" onChange={(value) => setAccountEmail(value.target.value)}/>
+          <Input placeholder={"Password"} variant="filled" type={hidePassword?"password":"text"} onChange={(value) => setPassword(value.target.value)} />
+          <HStack justifyContent={"flex-end"}>
+            <Text fontSize="xs">Show Password</Text>
+            <Switch paddingTop={"1"} colorScheme={"teal"} size={"md"} onChange={()=>setHidePassword(!hidePassword)}/>
+          </HStack>
+        </VStack>
           <Box height={"5"} />
           <Button
             variant="solid"
             onClick={() => {
               props.setIsVerifying(!props.isVerifying);
-              setTimeout(() => {
-                router.push({ 
-                  pathname: "/dashboard",
-                });
-              }, 2000);
+               verifyLogin();
             }}
           >
             SIGN IN
