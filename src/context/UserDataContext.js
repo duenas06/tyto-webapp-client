@@ -23,14 +23,10 @@ export function UserDataContextProvider(props) {
     setUserData: setUserData,
   };
 
-  const [utilDashboard, setUtilDashboard] = useState("")
-
 
   return (
     <UserDataContext.Provider value={context}>
-      <DashboardUtilContext.Provider value={[utilDashboard, setUtilDashboard]}>
       {props.children}
-      </DashboardUtilContext.Provider>
     </UserDataContext.Provider>
   );
 }
