@@ -29,10 +29,13 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   const [roomName, setroomName] = useState("")
   const toast = useToast();
   const [answerI, setAnswerI] = useState("")
-  const [output, setOutput] = useState(null)
+  const [action, setAction] = useState([
+    'Select Answer'
+  ])
   const [page, setpage] = useState(1)
   const [formFields, setFormFields] = useState([
     {
+      index: 0,
       question: '',
       answer: '',
       itemA: '',
@@ -43,7 +46,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   ])
 
   const initialItems = {
-    index:0,
+    index: 0,
     question: '',
     answer: '',
     itemA: '',
@@ -55,28 +58,28 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   const reducer = (state, action) => {
     switch (action.type) {
       case "QUESTION":
-       return {
-         ...state, question: action.value.text, index: action.value.index
-       }
+        return {
+          ...state, question: action.value.text, index: action.value.index
+        }
 
       case "ANSWER":
         return {
-         ...state, answer: action.value
+          ...state, answer: action.value.text, index: action.value.index
         };
 
       case "ITEM_A":
         return {
-         ...state, itemA: action.value
+          ...state, itemA: action.value
         };
 
       case "ITEM_B":
         return {
-         ...state, itemB: action.value
+          ...state, itemB: action.value
         };
 
       case "ITEM_C":
         return {
-         ...state, itemC: action.value
+          ...state, itemC: action.value
         };
 
       case "ITEM_D":
@@ -89,12 +92,19 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   const [item, dispatch] = useReducer(reducer, initialItems);
 
   const examChoices = [
+    'Select Answer',
     'itemA',
     'itemB',
     'itemC',
     'itemD',
 
   ]
+
+  const buttonTextHandler = (idx, value) => {
+    const tempo = action
+    tempo[idx] = value
+    setAction(tempo)
+  }
 
   const handleFormChange = (event, index) => {
     let data = [...formFields];
@@ -104,18 +114,18 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
 
   const handleChange = () => {
     if (page == formFields.length - 1) {
-    console.log(formFields)
+      console.log(formFields)
     }
   }
 
 
   useEffect(() => {
-    let tempa = {...formFields[item.index], ...item}
+    let tempa = { ...formFields[item.index], ...item }
     const tempo = formFields;
-    tempo[item.index]=tempa
+    tempo[item.index] = tempa
     setFormFields(tempo)
   }, [item])
-  
+
 
   const submit = (e) => {
     e.preventDefault();
@@ -139,6 +149,9 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     temps.push(object)
     setFormFields(temps)
     setpage(p)
+    const tempa = action
+    tempa.push('Select Answer')
+    setAction(tempa)
   }
 
   const removeFields = (index) => {
@@ -262,7 +275,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                     <Text>Question</Text>
                     <Input
                       variant={"filled"}
-                      onChange={(event) => dispatch({type: 'QUESTION', value: {text: event.target.value, index}})}
+                      onChange={(event) => dispatch({ type: 'QUESTION', value: { text: event.target.value, index } })}
                     />
                   </Box>
                   <HStack justifyContent="space-between">
@@ -308,25 +321,23 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                     <Text>Answer</Text>
                     <Menu>
                       <MenuButton
+                        key={index}
                         width={"100%"}
                         as={Button}
                         rightIcon={<ChevronDownIcon
-
                         />}
                       >
-                        {answerI === "" ? "Select Answer" : answerI}
+                        {action[index]}
                       </MenuButton>
-                      <MenuList  >
+                      <MenuList>
                         {examChoices.map((data, subindex) => {
-                          return (
+                          return subindex === 0 ? <></> :
                             <MenuItem
                               key={subindex}
-                              onClick={() => { form.answer = data, setAnswerI(data) }}
-                            // value={form.answer=(data)}
+                              onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index } }); buttonTextHandler(index, data) }}
                             >
                               {data}
                             </MenuItem>
-                          );
                         })}
                       </MenuList>
                     </Menu>
