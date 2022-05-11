@@ -13,27 +13,30 @@ import {
   ScaleFade,
   Divider,
   Spacer,
+  Image,
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext,  } from "react";
 import Calendar from "react-calendar";
 import { Circles } from "react-loader-spinner";
 import UserDataContext from "../../src/context/UserDataContext";
 import "react-calendar/dist/Calendar.css";
 import { db } from "../../firebase";
 import { collection, query, where, getDoc, doc,getDocs } from "@firebase/firestore";
+import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import Head from "next/head";
+import CreateExamModal from "../../constants/components/modals/exams/create_exam"
 
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
-    { name: "Pop Up Quizzes", link: "/" },
+    { name: "Exam", link: "/exam" },
     { name: "Recitation Questions", link: "/" },
     { name: "Class Schedules", link: "/" },
     { name: "Sign Out", link: "/sign-in" },
   ];
-  const currentMenuSelected = 0;
+  const currentMenuSelected = 1;
   return (
     <Box>
       <Text fontWeight={"bold"} fontSize={"md"}>
@@ -67,7 +70,30 @@ const NavBarMenuSection = () => {
   );
 };
 const DashboardNavigationBar = () => {
-  const userDataContext = useContext(UserDataContext);
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setTimeout(()=>{
+      const checkSession = localStorage.getItem("email");
+      if (!checkSession) {
+        router.push("/sign-in");
+      }
+        getloadData(checkSession);
+        setLoading(false);
+    },[2000])
+  }, []);
+
+  async function getloadData(props){
+    setLoading(true);
+    if(props){
+      //TEACHER INFORMATION
+      const TEACHER_REF = doc(db,
+        "accounts_teacher", props);
+    
+        const teacher = await getDoc(TEACHER_REF);
+        setData({...teacher.data()})
+      }
+    }
   return (
   <VStack
     minWidth={"300px"}
@@ -86,7 +112,7 @@ const DashboardNavigationBar = () => {
         borderRadius={"full"}
       />
       <VStack alignItems={"stretch"}>
-        <Text fontWeight={"bold"}>{userDataContext.data.fullname}</Text>
+        <Text fontWeight={"bold"}>{data.fullname}</Text>
         <Text fontSize={"xs"}>Teacher</Text>
       </VStack>
     </HStack>
@@ -107,24 +133,28 @@ export default function SignIn() {
   const [schedule, setSchedule] = useState([])
   const [loading, setLoading] = useState(false);
   const [roomInfo, setRoomInfo] = useState({})
+  const [scheduleIDS, setScheduleIDs] = useState([]);
+  const [section, setSection]= useState([])
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
 
     setTimeout(()=>{
-      if (userDataContext.data == null) {
+      const checkSession = localStorage.getItem("email");
+      if (!checkSession) {
         router.push("/sign-in");
       }
-        getloadData(userDataContext.data);
+        getloadData(checkSession);
         setLoading(false);
     },[2000])
   }, []);
   
-  async function getloadData(props){
+  async function getloadData(props){  
     setLoading(true);
     schedules = []
-    if(props.email){
+    if(props){
       //TEACHER INFORMATION
       const TEACHER_REF = doc(db,
-        "accounts_teacher", props.email);
+        "accounts_teacher", props);
     
         const teacher = await getDoc(TEACHER_REF);
         setData({...teacher.data()})
@@ -137,7 +167,7 @@ export default function SignIn() {
     
         const GSEVEN_REF = await getDoc(GRADE_SEVEN);
         
-        schedules.push(GSEVEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules.push(GSEVEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
 
         //GRADE EIGHT
         const GRADE_EIGHT = doc(db,
@@ -145,7 +175,7 @@ export default function SignIn() {
       
         const GEIGHT_REF = await getDoc(GRADE_EIGHT);
         
-        schedules = schedules.concat(GEIGHT_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules = schedules.concat(GEIGHT_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
 
         //GRADE NINE
         const GRADE_NINE = doc(db,
@@ -153,7 +183,7 @@ export default function SignIn() {
       
         const GNINE_REF = await getDoc(GRADE_NINE);
         
-        schedules = schedules.concat(GNINE_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules = schedules.concat(GNINE_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
 
         //GRADE TEN
         const GRADE_TEN = doc(db,
@@ -161,11 +191,19 @@ export default function SignIn() {
       
         const GTEN_REF = await getDoc(GRADE_TEN);
         
-        schedules = schedules.concat(GTEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules = schedules.concat(GTEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
         setSchedule(schedule=>[...schedule, schedules])
         setLoading(false);
  
     }
+  }
+
+  function getRoomInfo() {
+    var sectionInfo =[]
+    schedule[0].map(val => {
+      sectionInfo.push({room_id:val?.room_id, name: val?.name})
+    })
+    return sectionInfo;
   }
 
   return (
@@ -178,7 +216,12 @@ export default function SignIn() {
     <Box minH={"100vh"} bg={"white"}>
       <HStack height={"100vh"} alignItems={"stretch"}>
        <DashboardNavigationBar/>
-
+       <CreateExamModal
+        isOpen={isOpen}
+        onClose={onClose}
+        roomInfo={section}
+        scheduleIDS={scheduleIDS}
+        teacherEmail={data.email}/>
         <Divider orientation="vertical" />
         <VStack
           width={"100%"}
@@ -193,7 +236,7 @@ export default function SignIn() {
             borderRadius={"lg"}
           >
             <VStack alignItems={"stretch"}>
-              <Heading color={"tyto_black"}>Hi {data.fullname}!</Heading>
+              <Heading color={"tyto_black"}>Hi {data.fullname}</Heading>
               <Text color={"tyto_faded_black"}>
                 Wishing you a productive day!
               </Text>
@@ -223,7 +266,30 @@ export default function SignIn() {
             paddingY={"1vw"}
             borderRadius={"lg"}
           >
+          <Button 
+          height={"fit-content"}
+          width={"fit-content"}
+          onClick={async () => {
+            setScheduleIDs(await getScheduleIDs()), setSection(getRoomInfo()), onOpen();
+          }}
+          >
+          <VStack
+                height={"20vh"}
+                flex={1}
+                backgroundColor={"tyto_teal"}
+                paddingX={"1vw"}
+                paddingY={"2vh"}
+                borderRadius={"xl"}
+                justifyContent={"center"}
+                cursor={"hand"}
+                _hover={{ shadow: "lg" }}
+              >
+                <Image boxSize ="120" src="/createquiz.svg"/>
+                <Text margin="5" alignSelf ="center">ADD EXAM</Text>
+              </VStack>
+          </Button>
             {schedule[0]?.map((val, index) => {
+              
               if(val) {
               return (
               <VStack

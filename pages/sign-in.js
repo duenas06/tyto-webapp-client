@@ -101,6 +101,7 @@ const SignInForm = (props) => {
             userDataContext.setUserData({
               dataObject: doc.data(),
             });
+            localStorage.setItem("email", doc.data().email)
             props.setIsVerifying(props.isVerifying);
           }
           else

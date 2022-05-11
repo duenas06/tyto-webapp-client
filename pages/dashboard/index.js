@@ -28,7 +28,7 @@ import Head from "next/head";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
-    { name: "Pop Up Quizzes", link: "/exam" },
+    { name: "Exam", link: "/exam" },
     { name: "Recitation Questions", link: "/" },
     { name: "Class Schedules", link: "/" },
     { name: "Sign Out", link: "/sign-in" },
@@ -47,6 +47,7 @@ const NavBarMenuSection = () => {
             key={index}
             cursor={"pointer"}
             onClick={() => Router.push({ pathname: menuItem.link })}
+            
           >
             <Box
               height={"10"}
@@ -67,7 +68,31 @@ const NavBarMenuSection = () => {
   );
 };
 const DashboardNavigationBar = () => {
-  const userDataContext = useContext(UserDataContext);
+  const [data, setData] = useState({});
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+
+    setTimeout(()=>{
+      const checkSession = localStorage.getItem("email");
+      if (!checkSession) {
+        router.push("/sign-in");
+      }
+        getloadData(checkSession);
+        setLoading(false);
+    },[2000])
+  }, []);
+  async function getloadData(props){
+    setLoading(true);
+    if(props){
+      //TEACHER INFORMATION
+      const TEACHER_REF = doc(db,
+        "accounts_teacher", props);
+    
+        const teacher = await getDoc(TEACHER_REF);
+        setData({...teacher.data()})
+      }
+    }
   return (
   <VStack
     minWidth={"300px"}
@@ -86,7 +111,7 @@ const DashboardNavigationBar = () => {
         borderRadius={"full"}
       />
       <VStack alignItems={"stretch"}>
-        <Text fontWeight={"bold"}>{userDataContext.data.fullname}</Text>
+        <Text fontWeight={"bold"}>{data.fullname}</Text>
         <Text fontSize={"xs"}>Teacher</Text>
       </VStack>
     </HStack>
@@ -110,10 +135,11 @@ export default function SignIn() {
   useEffect(() => {
 
     setTimeout(()=>{
-      if (userDataContext.data == null) {
+      const checkSession = localStorage.getItem("email");
+      if (!checkSession) {
         router.push("/sign-in");
       }
-        getloadData(userDataContext.data);
+        getloadData(checkSession);
         setLoading(false);
     },[2000])
   }, []);
@@ -121,10 +147,10 @@ export default function SignIn() {
   async function getloadData(props){
     setLoading(true);
     schedules = []
-    if(props.email){
+    if(props){
       //TEACHER INFORMATION
       const TEACHER_REF = doc(db,
-        "accounts_teacher", props.email);
+        "accounts_teacher", props);
     
         const teacher = await getDoc(TEACHER_REF);
         setData({...teacher.data()})
@@ -137,7 +163,7 @@ export default function SignIn() {
     
         const GSEVEN_REF = await getDoc(GRADE_SEVEN);
         
-        schedules.push(GSEVEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules.push(GSEVEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
 
         //GRADE EIGHT
         const GRADE_EIGHT = doc(db,
@@ -145,7 +171,7 @@ export default function SignIn() {
       
         const GEIGHT_REF = await getDoc(GRADE_EIGHT);
         
-        schedules = schedules.concat(GEIGHT_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules = schedules.concat(GEIGHT_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
 
         //GRADE NINE
         const GRADE_NINE = doc(db,
@@ -153,7 +179,7 @@ export default function SignIn() {
       
         const GNINE_REF = await getDoc(GRADE_NINE);
         
-        schedules = schedules.concat(GNINE_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules = schedules.concat(GNINE_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
 
         //GRADE TEN
         const GRADE_TEN = doc(db,
@@ -161,7 +187,7 @@ export default function SignIn() {
       
         const GTEN_REF = await getDoc(GRADE_TEN);
         
-        schedules = schedules.concat(GTEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props.email))
+        schedules = schedules.concat(GTEN_REF.data().subjects.find(({teacher_email}) => teacher_email === props))
         setSchedule(schedule=>[...schedule, schedules])
         setLoading(false);
  

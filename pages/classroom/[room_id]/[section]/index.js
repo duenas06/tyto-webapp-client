@@ -26,6 +26,7 @@ export default function ClassRoom() {
     },[2000])
   },[])
   return (
+
     <Box minH={"100vh"} bg={"tyto_bg"}>
       {
         startMeeting && <Jutsu
