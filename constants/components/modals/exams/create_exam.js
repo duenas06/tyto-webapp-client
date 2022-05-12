@@ -21,14 +21,11 @@ import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { useEffect, useState, useReducer } from "react";
 import createExam from "../../../services/exams/create_exam"
 const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail }) => {
+  const toast = useToast();
   const [examName, setExamName] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullname, setFullname] = useState("");
   const [scheduleID, setScheduleID] = useState("");
   const [roomID, setRoomID] = useState("")
   const [roomName, setroomName] = useState("")
-  const toast = useToast();
-  const [answerI, setAnswerI] = useState("")
   const [action, setAction] = useState([
     'Select Answer'
   ])
@@ -69,22 +66,22 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
 
       case "ITEM_A":
         return {
-          ...state, itemA: action.value
+          ...state, itemA: action.value.text, index: action.value.index
         };
 
       case "ITEM_B":
         return {
-          ...state, itemB: action.value
+          ...state, itemB: action.value.text, index: action.value.index
         };
 
       case "ITEM_C":
         return {
-          ...state, itemC: action.value
+          ...state, itemC: action.value.text, index: action.value.index
         };
 
       case "ITEM_D":
         return {
-          ...state, itemD: action.value
+          ...state, itemD: action.value.text, index: action.value.index
         };
     }
   };
@@ -131,6 +128,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     e.preventDefault();
     handleChange()
     console.log(formFields)
+    processCreateExam();
   }
 
   const addFields = () => {
@@ -160,18 +158,19 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     setFormFields(data)
   }
 
-  const processCreateAccount = async () => {
+  const processCreateExam = async () => {
     const createExams = await createExam({
       examName: examName,
       room_id: roomID,
       roomName: roomName,
       teacher_email: teacherEmail,
       schedule_id: scheduleID,
+      items: formFields
     });
 
     if (createExams.success) {
       toast({
-        title: "Account Created",
+        title: "Exam Created",
         description: createExams.message,
         status: "success",
         duration: 5000,
@@ -180,8 +179,8 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
       onClose();
     } else {
       toast({
-        title: "Account Creation Failed",
-        description: createAccountResult.message,
+        title: "Exam Creation Failed",
+        description: createExams.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -190,16 +189,47 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     }
   };
 
+  const MenuButtonAnswer = (props) => {
+    const idx = Math.round(Math.random() * 999)
+    return (
+      <Box>
+        <Text>Answer</Text>
+        <Menu>
+          <MenuButton
+            key={idx}
+            width={"100%"}
+            as={Button}
+            rightIcon={<ChevronDownIcon
+            />}
+          >
+            {action[props.itemIndex]}
+          </MenuButton>
+          <MenuList>
+            {examChoices.map((data, subindex) => {
+              return subindex === 0 ? <></> :
+                <MenuItem
+                  key={subindex}
+                  onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index: props.itemIndex } }); buttonTextHandler(props.itemIndex, data) }}
+                >
+                  {data}
+                </MenuItem>
+            })}
+          </MenuList>
+        </Menu>
+      </Box>
+    )
+  }
   return (
     <Modal
       isOpen={isOpen}
       size="xl"
       onClose={() => {
         onClose();
-        setPassword("");
         setRoomID("");
         setroomName("");
         setScheduleID("");
+        setRoomID("");
+        setFormFields([]);
       }}
     >
       <ModalOverlay />
@@ -235,7 +265,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
             </Box>
 
             <Box width={"100%"}>
-              <Text>Schedule ID</Text>
+              <Text>Subject ID</Text>
               <Menu>
                 <MenuButton
                   width={"100%"}
@@ -283,8 +313,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                       <Text>Option A</Text>
                       <Input
                         variant={"filled"}
-                        onChange={event => handleFormChange(event, index)}
-                        value={form.itemA}
+                        onChange={event => dispatch({ type: 'ITEM_A', value: { text: event.target.value, index } })}
                       />
                     </Box>
 
@@ -292,8 +321,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                       <Text>Option B</Text>
                       <Input
                         variant={"filled"}
-                        onChange={event => handleFormChange(event, index)}
-                        value={form.itemB}
+                        onChange={event => dispatch({ type: 'ITEM_B', value: { text: event.target.value, index } })}
                       />
                     </Box>
                   </HStack>
@@ -303,8 +331,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                       <Text>Option C</Text>
                       <Input
                         variant={"filled"}
-                        onChange={event => handleFormChange(event, index)}
-                        value={form.itemC}
+                        onChange={event => dispatch({ type: 'ITEM_C', value: { text: event.target.value, index } })}
                       />
                     </Box>
 
@@ -312,36 +339,13 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                       <Text>Option D</Text>
                       <Input
                         variant={"filled"}
-                        onChange={event => handleFormChange(event, index)}
-                        value={form.itemD}
+                        onChange={event => dispatch({ type: 'ITEM_D', value: { text: event.target.value, index } })}
                       />
                     </Box>
                   </HStack>
-                  <Box>
-                    <Text>Answer</Text>
-                    <Menu>
-                      <MenuButton
-                        key={index}
-                        width={"100%"}
-                        as={Button}
-                        rightIcon={<ChevronDownIcon
-                        />}
-                      >
-                        {action[index]}
-                      </MenuButton>
-                      <MenuList>
-                        {examChoices.map((data, subindex) => {
-                          return subindex === 0 ? <></> :
-                            <MenuItem
-                              key={subindex}
-                              onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index } }); buttonTextHandler(index, data) }}
-                            >
-                              {data}
-                            </MenuItem>
-                        })}
-                      </MenuList>
-                    </Menu>
-                  </Box>
+                  <MenuButtonAnswer
+                    itemIndex={index}
+                  />
                 </Box>
               )
             })}

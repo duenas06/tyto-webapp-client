@@ -1,16 +1,13 @@
-import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
 
-export default async function createExam({
-  examName,
-  roomName,
+export default async function giveExam({
   room_id,
   teacher_email,
   schedule_id,
-  items
 }) {
-  const docRef = collection(db, "exams", schedule_id, "exam_data");
-  const docRefa = doc(db, "exams", schedule_id);
+  const docRef = query(collection(db, "exams", schedule_id, "exam_data"), where("teacher_email", "==", teacher_email), where("room_id", "==", room_id));
+  const docRefa = doc(db, "exams", schedule_id, "exam_data", teacher_email);
   const docData = await getDoc(docRefa);
   const isEmailExisting = docData.exists();
   var date = new Date();
@@ -18,14 +15,10 @@ export default async function createExam({
   const logsRef = doc(db, "logs", date.toString());
 
   if (!isEmailExisting) {
-    await addDoc(docRef, {
-      is_active:false,
-      schedule_id: schedule_id,
-      room_id:room_id,
-      name: roomName,
-      teacher_email:teacher_email,
-      examName: examName,
-      items: items
+    const data = await getDocs(docRef)
+    data.forEach(docs => {
+        const upDate = doc(db, "exams", schedule_id, "exam_data", docs.id)
+        updateDoc(upDate, {is_active: true})
     });
 
     await setDoc(logsRef, {
