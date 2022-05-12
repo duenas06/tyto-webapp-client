@@ -14,7 +14,8 @@ import {
   Divider,
   Spacer,
   Image,
-  useToast
+  useToast,
+  Grid
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
@@ -61,7 +62,7 @@ const NavBarMenuSection = () => {
             />
             <Text
               fontSize={"sm"}
-              _hover={{ transitionDuration: ".2s",  transform: "scale(1.2)", overflow: "hidden", color:"cyan"}}
+              _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}
               color={currentMenuSelected == index && "tyto_teal"}
             >
               {menuItem.name}
@@ -150,7 +151,7 @@ export default function SignIn() {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [2000])
+    }, [])
   }, []);
 
   async function getloadData(props) {
@@ -335,16 +336,19 @@ export default function SignIn() {
               paddingX={"1vw"}
               paddingY={"1vw"}
             >
-              {"Today's Schedule"}
+              {"Available Exams"}
             </Text>
             <Box minH={"100%"} bg={"white"} >
-              <Stack direction={["column", "column", "row"]}
-                alignItems={"stretch"}
-                paddingX={"1vw"}
-                paddingY={"1vw"}
+              <Grid
+                // h='200px'
+                // bg={"blue"}
+                templateRows='repeat(2, 1fr)'
+                templateColumns='repeat(4, 1fr)'
+                gap={4}
                 borderRadius={"lg"}
               >
                 <Button
+                  maxW={"20vw"}
                   height={"fit-content"}
                   width={"fit-content"}
                   _hover={{ shadow: "lg" }}
@@ -354,6 +358,7 @@ export default function SignIn() {
                 >
                   <VStack
                     height={"20vh"}
+                    width={"25.5vh"}
                     flex={1}
                     backgroundColor={"tyto_teal"}
                     paddingX={"1vw"}
@@ -361,9 +366,9 @@ export default function SignIn() {
                     borderRadius={"xl"}
                     justifyContent={"center"}
                     cursor={"hand"}
-               
+
                   >
-                    <Image boxSize="120" src="/createquiz.svg" />
+                    <Image boxSize="124" src="/createquiz.svg" />
                     <Text margin="5" alignSelf="center">ADD EXAM</Text>
                   </VStack>
                 </Button>
@@ -373,6 +378,7 @@ export default function SignIn() {
                     return (
                       <VStack
                         height={"20vh"}
+                        maxW={"20vw"}
                         flex={1}
                         backgroundColor={"tyto_teal"}
                         paddingX={"1vw"}
@@ -383,13 +389,14 @@ export default function SignIn() {
                         _hover={{ shadow: "lg" }}
                         key={index}
                       >
-                        <Text color="white" fontWeight="bold" fontSize={"2xl"}>
+                        <Text color="white" fontWeight="bold" fontSize={"xl"} textAlign={"center"}>
                           {val?.examName}
                         </Text>
                         <Text color="white">{val?.name}</Text>
                         <Spacer />
                         <Button
                           variant={"solid"}
+                          width={"100%"}
                           alignSelf="flex-end"
                           backgroundColor={"#06D7A0"}
                           _hover={{ backgroundColor: "#06D7A0" }}
@@ -412,7 +419,7 @@ export default function SignIn() {
                     )
                   }
                 })}
-              </Stack>
+              </Grid>
             </Box>
           </VStack>
           <Divider orientation="vertical" />

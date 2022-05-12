@@ -81,7 +81,7 @@ const DashboardNavigationBar = () => {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [2000])
+    }, [])
   }, []);
   async function getloadData(props) {
     setLoading(true);
@@ -142,7 +142,7 @@ export default function SignIn() {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [2000])
+    }, [])
   }, []);
 
   async function getloadData(props) {
@@ -254,7 +254,8 @@ export default function SignIn() {
                   if (val) {
                     return (
                       <VStack
-                        height={"20vh"}
+                        height={"18vh"}
+                        maxW={"20vw"}
                         flex={1}
                         backgroundColor={"tyto_teal"}
                         paddingX={"1vw"}
@@ -265,13 +266,14 @@ export default function SignIn() {
                         _hover={{ shadow: "lg" }}
                         key={index}
                       >
-                        <Text color="white" fontWeight="bold" fontSize={"2xl"}>
+                        <Text color="white" fontWeight="bold" fontSize={"2xl"} textAlign={"center"}>
                           {val?.name}
                         </Text>
                         <Text color="white">{val?.time}</Text>
                         <Spacer />
                         <Button
                           variant={"solid"}
+                          width={"100%"}
                           alignSelf="flex-end"
                           backgroundColor={"#06D7A0"}
                           _hover={{ backgroundColor: "#06D7A0" }}

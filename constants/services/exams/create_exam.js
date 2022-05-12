@@ -10,7 +10,7 @@ export default async function createExam({
   items
 }) {
   const docRef = collection(db, "exams", schedule_id, "exam_data");
-  const docRefa = doc(db, "exams", schedule_id);
+  const docRefa = doc(db, "users", schedule_id);
   const docData = await getDoc(docRefa);
   const isEmailExisting = docData.exists();
   var date = new Date();
@@ -25,7 +25,8 @@ export default async function createExam({
       name: roomName,
       teacher_email:teacher_email,
       examName: examName,
-      items: items
+      items: items,
+      create:date.toString()
     });
 
     await setDoc(logsRef, {

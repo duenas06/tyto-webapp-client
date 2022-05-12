@@ -26,6 +26,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   const [scheduleID, setScheduleID] = useState("");
   const [roomID, setRoomID] = useState("")
   const [roomName, setroomName] = useState("")
+  const [loading, setLoading] =useState(false)
   const [action, setAction] = useState([
     'Select Answer'
   ])
@@ -159,6 +160,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   }
 
   const processCreateExam = async () => {
+    setLoading(true)
     const createExams = await createExam({
       examName: examName,
       room_id: roomID,
@@ -187,6 +189,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
       });
       onClose();
     }
+    setLoading(false)
   };
 
   const MenuButtonAnswer = (props) => {
@@ -229,7 +232,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
         setroomName("");
         setScheduleID("");
         setRoomID("");
-        setFormFields([]);
+        setFormFields([1])
       }}
     >
       <ModalOverlay />
@@ -361,7 +364,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
           <Button colorScheme="green" mr={3} onClick={removeFields}>
             Remove Question
           </Button>
-          <Button colorScheme="green" mr={3} onClick={submit}>
+          <Button isDisabled={loading} colorScheme="green" mr={3} onClick={submit}>
             SUBMIT
           </Button>
         </ModalFooter>
