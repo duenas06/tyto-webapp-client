@@ -1,5 +1,6 @@
 import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/firestore";
 import { db } from "../../../firebase";
+import SignIn from "../../../pages/exam";
 
 export default async function createExam({
   examName,
@@ -24,7 +25,7 @@ export default async function createExam({
       room_id:room_id,
       name: roomName,
       teacher_email:teacher_email,
-      examName: examName,
+      exam_name: examName,
       items: items,
       create:date.toString()
     });
@@ -35,7 +36,6 @@ export default async function createExam({
       timestamp: date.toString(),
       description: `${teacher_email} created an exam with a room id of ${room_id}`,
     });
-
     return { success: true, message: "Exam Created Successfully." };
   } else {
     return { success: false, message: "Exam Creation Failed." };

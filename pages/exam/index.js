@@ -15,11 +15,17 @@ import {
   Spacer,
   Image,
   useToast,
-  Grid
+  Grid,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
-import { useState, useEffect, useContext, } from "react";
+import React, { useState, useEffect, useContext, } from "react";
 import Calendar from "react-calendar";
 import { Circles } from "react-loader-spinner";
 import UserDataContext from "../../src/context/UserDataContext";
@@ -30,13 +36,13 @@ import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids"
 import Head from "next/head";
 import CreateExamModal from "../../constants/components/modals/exams/create_exam"
 import giveExam from "../../constants/services/exams/give_exam";
-
+import removeExam from "../../constants/services/exams/remove_exam";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
     { name: "Exam", link: "/exam" },
-    { name: "Recitation Questions", link: "/" },
-    { name: "Class Schedules", link: "/" },
+    // { name: "Recitation Questions", link: "/" },
+    { name: "Class Schedules", link: "/dashboard" },
     { name: "Sign Out", link: "/sign-in" },
   ];
   const currentMenuSelected = 1;
@@ -141,7 +147,13 @@ export default function SignIn() {
   const [section, setSection] = useState([])
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [schedule, setSchedule] = useState([])
+  const cancelRef = React.useRef()
   const toast = useToast();
+  const {
+    isOpen: isOpenAlertModal,
+    onOpen: onOpenAlertModal,
+    onClose: onCloseAlertModal
+  } = useDisclosure()
   useEffect(() => {
 
     setTimeout(() => {
@@ -285,6 +297,34 @@ export default function SignIn() {
     }
   };
 
+  const processRemoveExam = async (props) => {
+    const giveExams = await removeExam({
+      room_id: props.room_id,
+      teacher_email: props.teacher_email,
+      schedule_id: props.schedule_id,
+    });
+
+    if (giveExams.success) {
+      toast({
+        title: "Exam Removed Successfully",
+        description: giveExams.message,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } else {
+      toast({
+        title: "Exam Operation Failed",
+        description: giveExams.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    }
+  };
+
   return (
     <>
       <Head>
@@ -353,7 +393,19 @@ export default function SignIn() {
                   width={"fit-content"}
                   _hover={{ shadow: "lg" }}
                   onClick={async () => {
-                    setScheduleIDs(await getScheduleIDs()), setSection(getRoomInfo()), onOpen();
+                    if (data.fullname) {
+                      setScheduleIDs(await getScheduleIDs()),
+                        setSection(getRoomInfo()),
+                        onOpen();
+                    } else {
+                      toast({
+                        title: "Create Exam",
+                        description: "Kindly wait for the data thank you",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                      });
+                    }
                   }}
                 >
                   <VStack
@@ -390,32 +442,84 @@ export default function SignIn() {
                         key={index}
                       >
                         <Text color="white" fontWeight="bold" fontSize={"xl"} textAlign={"center"}>
-                          {val?.examName}
+                          {val?.exam_name}
                         </Text>
                         <Text color="white">{val?.name}</Text>
                         <Spacer />
-                        <Button
-                          variant={"solid"}
-                          width={"100%"}
-                          alignSelf="flex-end"
-                          backgroundColor={"#06D7A0"}
-                          _hover={{ backgroundColor: "#06D7A0" }}
-                          _active={{ backgroundColor: "#06D7A0" }}
-                          onClick={() => {
-                            router.push({
-                              pathname: "/classroom/[room_id]/[section]",
-                              query: {
-                                room_id: val?.room_id,
-                                section: val?.name
-                              }
-                            })
-                            processGiveExam(val);
-                            setRoomInfo(val)
-                          }}
+                        <HStack width={"100%"}>
+                          <Button
+                            variant={"solid"}
+                            width={"100%"}
+                            alignSelf="flex-end"
+                            backgroundColor={"#06D7A0"}
+                            _hover={{ backgroundColor: "#06D7A0" }}
+                            _active={{ backgroundColor: "#06D7A0" }}
+                            onClick={() => {
+                              router.push({
+                                pathname: "/classroom/[room_id]/[section]/[exam_name]",
+                                query: {
+                                  room_id: val?.room_id,
+                                  section: val?.name,
+                                  exam_name: val?.exam_name,
+                                },
+                              })
+                              localStorage.setItem('roomData', JSON.stringify(val))
+                              processGiveExam(val);
+                              setRoomInfo(val)
+                            }}
+                          >
+                            Give
+                          </Button>
+
+                          <Button
+                            variant={"solid"}
+                            width={"100%"}
+                            alignSelf="flex-end"
+                            backgroundColor={"#F56565"}
+                            _hover={{ backgroundColor: "#FC8181" }}
+                            _active={{ backgroundColor: "#F56565" }}
+                            onClick={() => {
+                              onOpenAlertModal()
+                            }}
+                          >
+                            Remove
+                          </Button>
+                        </HStack>
+
+                        <AlertDialog
+                          isOpen={isOpenAlertModal}
+                          leastDestructiveRef={cancelRef}
+                          onClose={onCloseAlertModal}
                         >
-                          Give
-                        </Button>
+                          <AlertDialogOverlay>
+                            <AlertDialogContent>
+                              <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                                Delete Customer
+                              </AlertDialogHeader>
+
+                              <AlertDialogBody>
+                                Are you sure? You can't undo this action afterwards.
+                              </AlertDialogBody>
+
+                              <AlertDialogFooter>
+                                <Button ref={cancelRef} onClick={onCloseAlertModal}>
+                                  Cancel
+                                </Button>
+                                <Button
+                                  backgroundColor={"#F56565"}
+                                  _hover={{ backgroundColor: "#FC8181" }}
+                                  onClick={() => {
+                                    processRemoveExam(val)
+                                    onCloseAlertModal()
+                                  }} ml={3}>
+                                  Delete
+                                </Button>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialogOverlay>
+                        </AlertDialog>
                       </VStack>
+
                     )
                   }
                 })}

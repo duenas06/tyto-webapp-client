@@ -23,7 +23,7 @@ export default function ClassRoom() {
   useEffect(()=>{
     setTimeout(()=>{
       setStartMeeting(!startMeeting)
-    },[2000])
+    },[])
   },[])
   return (
 
@@ -38,7 +38,7 @@ export default function ClassRoom() {
         // end
         containerStyles={{
           height:'100vh',
-          width:'100vw'
+          width:'100%'
         }}
         loadingComponent={<p>loading ...</p>}
         errorComponent={<p>Oops, something went wrong</p>}
