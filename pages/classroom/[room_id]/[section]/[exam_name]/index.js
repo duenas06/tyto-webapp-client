@@ -124,7 +124,7 @@ export default function ExamRoom() {
 
                 <TableContainer>
                   <Table variant="striped" colorScheme="facebook">
-                    <TableCaption>Imperial to metric conversion factors</TableCaption>
+                    <TableCaption>Good Luck Everyone!</TableCaption>
                     <Thead>
                       <Tr>
                         <Th>Student Name</Th>
