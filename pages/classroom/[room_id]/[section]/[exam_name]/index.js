@@ -14,7 +14,7 @@ import {
   Spacer,
   Text,
   VStack,
-  Progress 
+  Progress
 } from "@chakra-ui/react";
 import Router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -30,27 +30,27 @@ export default function ExamRoom() {
   const [student, setStudent] = useState([])
   const [exam, setExam] = useState({})
   const [studenta, setStudenta] = useState([])
+  const [examData, setExamData] = useState("")
 
 
-
-  async function StudentAnswers(props) {
-
-
-  }
   useEffect(() => {
     const roomData = localStorage.getItem('roomData')
     const datas = JSON.parse(roomData)
-    const docRef = query(collection(db, "exams", datas.schedule_id, "exam_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id))
-    const unsub = onSnapshot(docRef, (studentInfo) => {
-      const students = []
-      studentInfo.forEach(docs => {
-        students = students.concat(docs.data())
-        setStudent([...student, students])
-      })
-    })
-    setExam(datas)
+    setExamData(datas.exam_name)
 
+    if (examData) {
+      const docRef = query(collection(db, "exams", datas.schedule_id, "exam_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id))
+      const unsub = onSnapshot(docRef, (studentInfo) => {
+        const students = []
+        studentInfo.forEach(docs => {
+          students = students.concat(docs.data())
+          setStudent([...student, students])
+        })
+      })
+      setExam(datas)
+    }
   }, [])
+
   useEffect(() => {
     setStartMeeting(!startMeeting)
   }, [2000])
@@ -137,17 +137,17 @@ export default function ExamRoom() {
                         return (
                           val.map((dat) => {
                             return (
-                                <Tr key={index}>
-                                  <Td>{dat?.student_name}</Td>
-                                  <Td><Progress hasStripe 
+                              <Tr key={index}>
+                                <Td>{dat?.student_name}</Td>
+                                <Td><Progress hasStripe
                                   isAnimated
-                                  
+
                                   size='lg'
-                                  borderRadius={'md'} 
+                                  borderRadius={'md'}
                                   value={dat?.number_answered}
-                                   max={exam.items.length}/></Td>
-                                  <Td>{dat?.number_answered}/{exam.items.length}</Td>
-                                </Tr>
+                                  max={exam.items.length} /></Td>
+                                <Td>{dat?.number_answered}/{exam.items.length}</Td>
+                              </Tr>
                             )
                           })
                         )

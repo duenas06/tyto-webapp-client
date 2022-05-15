@@ -27,6 +27,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   const [roomID, setRoomID] = useState("")
   const [roomName, setroomName] = useState("")
   const [loading, setLoading] =useState(false)
+  const [room, setRoom] = useState("");
   const [action, setAction] = useState([
     'Select Answer'
   ])
@@ -268,24 +269,26 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
             </Box>
 
             <Box width={"100%"}>
-              <Text>Subject ID</Text>
+              <Text>Room ID</Text>
               <Menu>
                 <MenuButton
                   width={"100%"}
                   as={Button}
                   rightIcon={<ChevronDownIcon />}
                 >
-                  {roomID === "" ? "Select Subject ID" : roomID}
+                  {room === "" ? "Select Room ID" : room}
                 </MenuButton>
                 <MenuList>
                   {roomInfo.map((data, index) => {
                     if (data.room_id) {
+                      const rooms = data.room_id.split("_")
+                      let room = rooms[0]
                       return (
                         <MenuItem
                           key={index}
-                          onClick={() => { setRoomID(data.room_id), setroomName(data.name) }}
+                          onClick={() => { setRoomID(data.room_id), setRoom(room), setroomName(data.name) }}
                         >
-                          {data.room_id}
+                          {room}
                         </MenuItem>
                       );
                     }
