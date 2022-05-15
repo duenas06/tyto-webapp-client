@@ -33,6 +33,9 @@ import Head from "next/head";
 import CreateExamModal from "../../constants/components/modals/exams/create_exam"
 import giveExam from "../../constants/services/exams/give_exam";
 import removeExam from "../../constants/services/exams/remove_exam";
+import CreateQuizModal from "../../constants/components/modals/quiz/create_quiz";
+import giveQuiz from "../../constants/services/quiz/give_quiz";
+import removeQuiz from "../../constants/services/quiz/remove_quiz";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
@@ -41,7 +44,7 @@ const NavBarMenuSection = () => {
     { name: "Quiz", link: "/quiz" },
     { name: "Sign Out", link: "/sign-in" },
   ];
-  const currentMenuSelected = 1;
+  const currentMenuSelected = 2;
   return (
     <Box>
       <Text fontWeight={"bold"} fontSize={"md"}>
@@ -136,7 +139,7 @@ export default function SignIn() {
   const router = useRouter();
   const userDataContext = useContext(UserDataContext);
   const [data, setData] = useState({});
-  const [exam, setExam] = useState([])
+  const [quiz, setQuiz] = useState([])
   const [loading, setLoading] = useState(false);
   const [roomInfo, setRoomInfo] = useState({})
   const [scheduleIDS, setScheduleIDs] = useState([]);
@@ -173,49 +176,49 @@ export default function SignIn() {
       const teacher = await getDoc(TEACHER_REF);
       setData({ ...teacher.data() })
 
-      //Exams
-      var exams = []
+      //quizs
+      var quizes = []
       //GRADE SEVEN
-      const GRADE_SEVEN_EXAM = query(collection(db,
-        "exams", "GRADE-SEVEN", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_SEVEN_QUIZ = query(collection(db,
+        "quiz", "GRADE-SEVEN", "quiz_data"), where("teacher_email", "==", props))
 
-      const GSEVEN_EXAM_REF = await getDocs(GRADE_SEVEN_EXAM);
+      const GSEVEN_QUIZ_REF = await getDocs(GRADE_SEVEN_QUIZ);
 
-      GSEVEN_EXAM_REF.forEach((doc) => {
-        exams.push(doc.data())
+      GSEVEN_QUIZ_REF.forEach((doc) => {
+        quizes.push(doc.data())
       });
 
 
       //GRADE EIGHT
-      const GRADE_EIGHT_EXAM = query(collection(db,
-        "exams", "GRADE-EIGHT", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_EIGHT_QUIZ = query(collection(db,
+        "quiz", "GRADE-EIGHT", "quiz_data"), where("teacher_email", "==", props))
 
-      const GEIGHT_EXAM_REF = await getDocs(GRADE_EIGHT_EXAM);
+      const GEIGHT_QUIZ_REF = await getDocs(GRADE_EIGHT_QUIZ);
 
-      GEIGHT_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+      GEIGHT_QUIZ_REF.forEach((doc) => {
+        quizes = quizes.concat(doc.data())
       });
 
       //GRADE NINE
-      const GRADE_NINE_EXAM = query(collection(db,
-        "exams", "GRADE-NINE", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_NINE_QUIZ = query(collection(db,
+        "quiz", "GRADE-NINE", "quiz_data"), where("teacher_email", "==", props))
 
-      const GNINE_EXAM_REF = await getDocs(GRADE_NINE_EXAM);
+      const GNINE_QUIZ_REF = await getDocs(GRADE_NINE_QUIZ);
 
-      GNINE_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+      GNINE_QUIZ_REF.forEach((doc) => {
+        quizes = quizes.concat(doc.data())
       });
 
       //GRADE TEN
-      const GRADE_TEN_EXAM = query(collection(db,
-        "exams", "GRADE-TEN", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_TEN_QUIZ = query(collection(db,
+        "quiz", "GRADE-TEN", "quiz_data"), where("teacher_email", "==", props))
 
-      const GTEN_EXAM_REF = await getDocs(GRADE_TEN_EXAM);
+      const GTEN_QUIZ_REF = await getDocs(GRADE_TEN_QUIZ);
 
-      GTEN_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+      GTEN_QUIZ_REF.forEach((doc) => {
+        quizes = quizes.concat(doc.data())
       });
-      setExam(exam => [...exam, exams])
+      setQuiz(quiz => [...quiz, quizes])
 
 
       //TEACHER SCHEDULE
@@ -265,17 +268,17 @@ export default function SignIn() {
     return sectionInfo;
   }
 
-  const processGiveExam = async (props) => {
-    const giveExams = await giveExam({
+  const processGiveQuiz = async (props) => {
+    const giveQuizs = await giveQuiz({
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
     });
 
-    if (giveExams.success) {
+    if (giveQuizs.success) {
       toast({
-        title: "Exam Given Successfully",
-        description: giveExams.message,
+        title: "Quiz Given Successfully",
+        description: giveQuizs.message,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -283,8 +286,8 @@ export default function SignIn() {
       onClose();
     } else {
       toast({
-        title: "Exam Given Failed",
-        description: giveExams.message,
+        title: "Quiz Given Failed",
+        description: giveQuizs.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -293,17 +296,17 @@ export default function SignIn() {
     }
   };
 
-  const processRemoveExam = async (props) => {
-    const giveExams = await removeExam({
+  const processRemoveQuiz = async (props) => {
+    const removeQuizs = await removeQuiz({
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
     });
 
-    if (giveExams.success) {
+    if (removeQuizs.success) {
       toast({
-        title: "Exam Removed Successfully",
-        description: giveExams.message,
+        title: "Quiz Removed Successfully",
+        description: removeQuizs.message,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -311,8 +314,8 @@ export default function SignIn() {
       onClose();
     } else {
       toast({
-        title: "Exam Operation Failed",
-        description: giveExams.message,
+        title: "Quiz Operation Failed",
+        description: removeQuizs.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -324,7 +327,7 @@ export default function SignIn() {
   return (
     <>
       <Head>
-        <title>Exam</title>
+        <title>Quiz</title>
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -332,7 +335,7 @@ export default function SignIn() {
       <Box minH={"100vh"} bg={"white"}>
         <HStack height={"100vh"} alignItems={"stretch"}>
           <DashboardNavigationBar />
-          <CreateExamModal
+          <CreateQuizModal
             isOpen={isOpen}
             onClose={onClose}
             roomInfo={section}
@@ -374,7 +377,7 @@ export default function SignIn() {
               paddingX={"1vw"}
               paddingY={"1vw"}
             >
-              {"Available Exams"}
+              {"Available Quizzes"}
             </Text>
             <Box minH={"100%"} bg={"white"} >
               <Grid
@@ -419,10 +422,10 @@ export default function SignIn() {
 
                   >
                     <Image boxSize="124" src="/createquiz.svg" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }} />
-                    <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD EXAM</Text>
+                    <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD QUIZ</Text>
                   </VStack>
                 </Button>
-                {exam[0]?.map((val, index) => {
+                {quiz[0]?.map((val, index) => {
 
                   if (val) {
                     return (
@@ -440,7 +443,7 @@ export default function SignIn() {
                         key={index}
                       >
                         <Text color="white" fontWeight="bold" fontSize={"xl"} textAlign={"center"}>
-                          {val?.exam_name}
+                          {val?.quiz_name}
                         </Text>
                         <Text color="white">{val?.name}</Text>
                         <Spacer />
@@ -450,18 +453,19 @@ export default function SignIn() {
                             width={"100%"}
                             alignSelf="flex-end"
                             backgroundColor={"#06D7A0"}
+                            _hover={{ backgroundColor: "#06D7A0" }}
                             _active={{ backgroundColor: "#06D7A0" }}
-                            _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
                             onClick={() => {
                               router.push({
-                                pathname: "/classroom/[room_id]/[section]",
+                                pathname: "/classroom/[room_id]/[section]/[quiz]",
                                 query: {
                                   room_id: val?.room_id,
                                   section: val?.name,
+                                  quiz: val?.quiz_name
                                 },
                               })
                               localStorage.setItem('roomData', JSON.stringify(val))
-                              processGiveExam(val);
+                              processGiveQuiz(val);
                               setRoomInfo(val)
                             }}
                           >
@@ -473,7 +477,7 @@ export default function SignIn() {
                             width={"100%"}
                             alignSelf="flex-end"
                             backgroundColor={"#F56565"}
-                            _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
+                            _hover={{ backgroundColor: "#FC8181" }}
                             _active={{ backgroundColor: "#F56565" }}
                             onClick={() => {
                               onOpenAlertModal()
@@ -506,7 +510,7 @@ export default function SignIn() {
                                   backgroundColor={"#F56565"}
                                   _hover={{ backgroundColor: "#FC8181" }}
                                   onClick={() => {
-                                    processRemoveExam(val)
+                                    processRemoveQuiz(val)
                                     onCloseAlertModal()
                                   }} ml={3}>
                                   Delete

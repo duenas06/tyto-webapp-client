@@ -30,7 +30,7 @@ const NavBarMenuSection = () => {
     { name: "Dashboard", link: "/dashboard" },
     { name: "Exam", link: "/exam" },
     // { name: "Recitation Questions", link: "/" },
-    { name: "Class Schedules", link: "/dashboard" },
+    { name: "Quiz", link: "/quiz" },
     { name: "Sign Out", link: "/sign-in" },
   ];
   const currentMenuSelected = 0;
