@@ -29,8 +29,8 @@ const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
     { name: "Exam", link: "/exam" },
-    // { name: "Recitation Questions", link: "/" },
     { name: "Quiz", link: "/quiz" },
+    { name: "Recitation", link: "/recitation" },
     { name: "Sign Out", link: "/sign-in" },
   ];
   const currentMenuSelected = 0;
@@ -163,9 +163,6 @@ export default function SignIn() {
         "schedules", "GRADE-SEVEN")
 
       const GSEVEN_REF = await getDoc(GRADE_SEVEN);
-
-    //  schedules.push(GSEVEN_REF.data().subjects.find(({ teacher_email }) => teacher_email === props))
-      console.log(schedule[0])
 
       schedules = schedules.concat(GSEVEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
 

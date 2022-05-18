@@ -20,14 +20,21 @@ import {
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { useEffect, useState, useReducer } from "react";
 import createQuiz from "../../../services/quiz/create_quiz";
-const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail }) => {
+import { collection, doc, getDoc, getDocs, where, query } from 'firebase/firestore'
+import { db } from "../../../../firebase";
+import createRecitation from "../../../services/recitation/create_recitation";
+const CreateRecitationModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail }) => {
   const toast = useToast();
   const [quizName, setQuizName] = useState("");
   const [scheduleID, setScheduleID] = useState("");
   const [roomID, setRoomID] = useState("")
   const [roomName, setroomName] = useState("")
-  const [loading, setLoading] =useState(false)
+  const [studentEmail, setStudentEmail] = useState("")
+  const [studentEmails, setStudentEmails] = useState([])
+  const [loading, setLoading] = useState(false)
   const [room, setRoom] = useState("");
+  let sched = "";
+  let studentEmailss = []
   const [action, setAction] = useState([
     'Select Answer'
   ])
@@ -130,7 +137,7 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     e.preventDefault();
     handleChange()
     console.log(formFields)
-    processCreateQuiz();
+    processCreateRecitation();
   }
 
   const addFields = () => {
@@ -160,21 +167,22 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     setFormFields(data)
   }
 
-  const processCreateQuiz = async () => {
+  const processCreateRecitation = async () => {
     setLoading(true)
-    const createQuizs = await createQuiz({
+    const createRecit = await createRecitation({
       quizName: quizName,
       room_id: roomID,
       roomName: roomName,
       teacher_email: teacherEmail,
+      student_email: studentEmail,
       schedule_id: scheduleID,
       items: formFields
     });
 
-    if (createQuizs.success) {
+    if (createRecit.success) {
       toast({
-        title: "Quiz Created",
-        description: createQuizs.message,
+        title: "Recitation Created",
+        description: createRecit.message,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -182,8 +190,8 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
       onClose();
     } else {
       toast({
-        title: "Quiz Creation Failed",
-        description: createQuizs.message,
+        title: "Recitation Creation Failed",
+        description: createRecit.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -192,6 +200,16 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     }
     setLoading(false)
   };
+
+  let getEmails = async () => {
+    let collectionRef = query(collection(db, 'accounts_student'), where("schedule_id", "==", sched))
+    let docData = await getDocs(collectionRef)
+    docData.forEach(doc => { studentEmailss.push({ email: doc.id }) })
+    setStudentEmails(studentEmailss)
+    console.log(sched)
+    console.log(studentEmailss)
+    return studentEmailss
+  }
 
   const MenuButtonAnswer = (props) => {
     const idx = Math.round(Math.random() * 999)
@@ -238,7 +256,7 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>CREATE QUIZ</ModalHeader>
+        <ModalHeader>CREATE RECITATION</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text>Kindly fill out the form below to proceed.</Text>
@@ -258,9 +276,34 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
                     return (
                       <MenuItem
                         key={index}
-                        onClick={() => setScheduleID(data.id)}
+                        onClick={() => { sched = data.id, getEmails(), setScheduleID(data.id) }}
                       >
                         {data.id}
+                      </MenuItem>
+                    );
+                  })}
+                </MenuList>
+              </Menu>
+            </Box>
+
+            <Box width={"100%"}>
+              <Text>Student Email</Text>
+              <Menu>
+                <MenuButton
+                  width={"100%"}
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                >
+                  {studentEmail === "" ? "Select Student Email" : studentEmail}
+                </MenuButton>
+                <MenuList>
+                  {studentEmails.map((data, index) => {
+                    return (
+                      <MenuItem
+                        key={index}
+                        onClick={() => { setStudentEmail(data.email)}}
+                      >
+                        {data.email}
                       </MenuItem>
                     );
                   })}
@@ -297,7 +340,7 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
               </Menu>
             </Box>
             <Box width={"100%"}>
-              <Text>Quiz Title</Text>
+              <Text>Recitation Title</Text>
               <Input
                 variant={"filled"}
                 onChange={(event) => setQuizName(event.target.value)}
@@ -376,4 +419,4 @@ const CreateQuizModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
   );
 };
 
-export default CreateQuizModal;
+export default CreateRecitationModal;

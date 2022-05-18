@@ -40,8 +40,8 @@ const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
     { name: "Exam", link: "/exam" },
-    // { name: "Recitation Questions", link: "/" },
     { name: "Quiz", link: "/quiz" },
+    { name: "Recitation", link: "/recitation" },
     { name: "Sign Out", link: "/sign-in" },
   ];
   const currentMenuSelected = 2;
@@ -229,7 +229,7 @@ export default function SignIn() {
 
       const GSEVEN_REF = await getDoc(GRADE_SEVEN);
 
-      schedules.push(GSEVEN_REF.data().subjects.find(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(GSEVEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
 
       //GRADE EIGHT
       const GRADE_EIGHT = doc(db,
@@ -237,7 +237,7 @@ export default function SignIn() {
 
       const GEIGHT_REF = await getDoc(GRADE_EIGHT);
 
-      schedules = schedules.concat(GEIGHT_REF.data().subjects.find(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(GEIGHT_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
 
       //GRADE NINE
       const GRADE_NINE = doc(db,
@@ -245,7 +245,7 @@ export default function SignIn() {
 
       const GNINE_REF = await getDoc(GRADE_NINE);
 
-      schedules = schedules.concat(GNINE_REF.data().subjects.find(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(GNINE_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
 
       //GRADE TEN
       const GRADE_TEN = doc(db,
@@ -253,7 +253,7 @@ export default function SignIn() {
 
       const GTEN_REF = await getDoc(GRADE_TEN);
 
-      schedules = schedules.concat(GTEN_REF.data().subjects.find(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(GTEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
       setSchedule(schedule => [...schedule, schedules])
       setLoading(false);
 

@@ -33,6 +33,12 @@ import Head from "next/head";
 import CreateExamModal from "../../constants/components/modals/exams/create_exam"
 import giveExam from "../../constants/services/exams/give_exam";
 import removeExam from "../../constants/services/exams/remove_exam";
+import CreateQuizModal from "../../constants/components/modals/quiz/create_quiz";
+import giveQuiz from "../../constants/services/quiz/give_quiz";
+import removeQuiz from "../../constants/services/quiz/remove_quiz";
+import CreateRecitationModal from "../../constants/components/modals/recitation/create_recitation";
+import removeRecitation from "../../constants/services/recitation/remove_recitation";
+import giveRecitation from "../../constants/services/recitation/give_recitation";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
@@ -41,7 +47,7 @@ const NavBarMenuSection = () => {
     { name: "Recitation", link: "/recitation" },
     { name: "Sign Out", link: "/sign-in" },
   ];
-  const currentMenuSelected = 1;
+  const currentMenuSelected = 3;
   return (
     <Box>
       <Text fontWeight={"bold"} fontSize={"md"}>
@@ -136,7 +142,7 @@ export default function SignIn() {
   const router = useRouter();
   const userDataContext = useContext(UserDataContext);
   const [data, setData] = useState({});
-  const [exam, setExam] = useState([])
+  const [recitation, setRecitation] = useState([])
   const [loading, setLoading] = useState(false);
   const [roomInfo, setRoomInfo] = useState({})
   const [scheduleIDS, setScheduleIDs] = useState([]);
@@ -173,49 +179,49 @@ export default function SignIn() {
       const teacher = await getDoc(TEACHER_REF);
       setData({ ...teacher.data() })
 
-      //Exams
-      var exams = []
+      //quizs
+      var recitations = []
       //GRADE SEVEN
-      const GRADE_SEVEN_EXAM = query(collection(db,
-        "exams", "GRADE-SEVEN", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_SEVEN_RECITE = query(collection(db,
+        "recitation", "GRADE-SEVEN", "recitation_data"), where("teacher_email", "==", props))
 
-      const GSEVEN_EXAM_REF = await getDocs(GRADE_SEVEN_EXAM);
+      const GSEVEN_RECITE_REF = await getDocs(GRADE_SEVEN_RECITE);
 
-      GSEVEN_EXAM_REF.forEach((doc) => {
-        exams.push(doc.data())
+      GSEVEN_RECITE_REF.forEach((doc) => {
+        recitations.push(doc.data())
       });
 
 
       //GRADE EIGHT
-      const GRADE_EIGHT_EXAM = query(collection(db,
-        "exams", "GRADE-EIGHT", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_EIGHT_RECITE = query(collection(db,
+        "recitation", "GRADE-EIGHT", "recitation_data"), where("teacher_email", "==", props))
 
-      const GEIGHT_EXAM_REF = await getDocs(GRADE_EIGHT_EXAM);
+      const GEIGHT_RECITE_REF = await getDocs(GRADE_EIGHT_RECITE);
 
-      GEIGHT_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+      GEIGHT_RECITE_REF.forEach((doc) => {
+        recitations = recitations.concat(doc.data())
       });
 
       //GRADE NINE
-      const GRADE_NINE_EXAM = query(collection(db,
-        "exams", "GRADE-NINE", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_NINE_RECITE = query(collection(db,
+        "recitation", "GRADE-NINE", "recitation_data"), where("teacher_email", "==", props))
 
-      const GNINE_EXAM_REF = await getDocs(GRADE_NINE_EXAM);
+      const GNINE_RECITE_REF = await getDocs(GRADE_NINE_RECITE);
 
-      GNINE_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+      GNINE_RECITE_REF.forEach((doc) => {
+        recitations = recitations.concat(doc.data())
       });
 
       //GRADE TEN
-      const GRADE_TEN_EXAM = query(collection(db,
-        "exams", "GRADE-TEN", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_TEN_RECITE = query(collection(db,
+        "recitation", "GRADE-TEN", "recitation_data"), where("teacher_email", "==", props))
 
-      const GTEN_EXAM_REF = await getDocs(GRADE_TEN_EXAM);
+      const GTEN_RECITE_REF = await getDocs(GRADE_TEN_RECITE);
 
-      GTEN_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+      GTEN_RECITE_REF.forEach((doc) => {
+        recitations = recitations.concat(doc.data())
       });
-      setExam(exam => [...exam, exams])
+      setRecitation(recitation => [...recitation, recitations])
 
 
       //TEACHER SCHEDULE
@@ -265,17 +271,18 @@ export default function SignIn() {
     return sectionInfo;
   }
 
-  const processGiveExam = async (props) => {
-    const giveExams = await giveExam({
+  const processGiveRecitation = async (props) => {
+    const giveRecits = await giveRecitation({
       room_id: props.room_id,
       teacher_email: props.teacher_email,
+      student_email: props.student_email,
       schedule_id: props.schedule_id,
     });
 
-    if (giveExams.success) {
+    if (giveRecits.success) {
       toast({
-        title: "Exam Given Successfully",
-        description: giveExams.message,
+        title: "Recitation Given Successfully",
+        description: giveRecits.message,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -283,8 +290,8 @@ export default function SignIn() {
       onClose();
     } else {
       toast({
-        title: "Exam Given Failed",
-        description: giveExams.message,
+        title: "Recitation Given Failed",
+        description: giveRecits.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -293,17 +300,18 @@ export default function SignIn() {
     }
   };
 
-  const processRemoveExam = async (props) => {
-    const giveExams = await removeExam({
+  const processRemoveRecitation = async (props) => {
+    const removeRecits = await removeRecitation({
       room_id: props.room_id,
       teacher_email: props.teacher_email,
+      student_email: props.student_email,
       schedule_id: props.schedule_id,
     });
 
-    if (giveExams.success) {
+    if (removeRecits.success) {
       toast({
-        title: "Exam Removed Successfully",
-        description: giveExams.message,
+        title: "Recitation Removed Successfully",
+        description: removeRecits.message,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -311,8 +319,8 @@ export default function SignIn() {
       onClose();
     } else {
       toast({
-        title: "Exam Operation Failed",
-        description: giveExams.message,
+        title: "Recitation Operation Failed",
+        description: removeRecits.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -324,7 +332,7 @@ export default function SignIn() {
   return (
     <>
       <Head>
-        <title>Exam</title>
+        <title>Recitation</title>
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -332,7 +340,7 @@ export default function SignIn() {
       <Box minH={"100vh"} bg={"white"}>
         <HStack height={"100vh"} alignItems={"stretch"}>
           <DashboardNavigationBar />
-          <CreateExamModal
+          <CreateRecitationModal
             isOpen={isOpen}
             onClose={onClose}
             roomInfo={section}
@@ -374,7 +382,7 @@ export default function SignIn() {
               paddingX={"1vw"}
               paddingY={"1vw"}
             >
-              {"Available Exams"}
+              {"Available Quizzes"}
             </Text>
             <Box minH={"100%"} bg={"white"} >
               <Grid
@@ -392,7 +400,7 @@ export default function SignIn() {
                   _hover={{ shadow: "lg" }}
                   onClick={async () => {
                     if (data.fullname) {
-                      setScheduleIDs(await getScheduleIDs()),
+                        setScheduleIDs(await getScheduleIDs()),
                         setSection(getRoomInfo()),
                         onOpen();
                     } else {
@@ -419,10 +427,10 @@ export default function SignIn() {
 
                   >
                     <Image boxSize="124" src="/createquiz.svg" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }} />
-                    <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD EXAM</Text>
+                    <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD QUIZ</Text>
                   </VStack>
                 </Button>
-                {exam[0]?.map((val, index) => {
+                {recitation[0]?.map((val, index) => {
 
                   if (val) {
                     return (
@@ -440,7 +448,7 @@ export default function SignIn() {
                         key={index}
                       >
                         <Text color="white" fontWeight="bold" fontSize={"xl"} textAlign={"center"}>
-                          {val?.exam_name}
+                          {val?.recitation_name}
                         </Text>
                         <Text color="white">{val?.name}</Text>
                         <Spacer />
@@ -450,18 +458,20 @@ export default function SignIn() {
                             width={"100%"}
                             alignSelf="flex-end"
                             backgroundColor={"#06D7A0"}
+                            _hover={{ backgroundColor: "#06D7A0" }}
                             _active={{ backgroundColor: "#06D7A0" }}
-                            _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
                             onClick={() => {
                               router.push({
-                                pathname: "/classroom/[room_id]/[section]",
+                                pathname: "/classroom/[room_id]/[section]/[quiz]/[recitation]",
                                 query: {
                                   room_id: val?.room_id,
                                   section: val?.name,
+                                  quiz: val?.recitation_name,
+                                  recitation: val?.recitation_name
                                 },
                               })
                               localStorage.setItem('roomData', JSON.stringify(val))
-                              processGiveExam(val);
+                              processGiveRecitation(val);
                               setRoomInfo(val)
                             }}
                           >
@@ -473,7 +483,7 @@ export default function SignIn() {
                             width={"100%"}
                             alignSelf="flex-end"
                             backgroundColor={"#F56565"}
-                            _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
+                            _hover={{ backgroundColor: "#FC8181" }}
                             _active={{ backgroundColor: "#F56565" }}
                             onClick={() => {
                               onOpenAlertModal()
@@ -506,7 +516,7 @@ export default function SignIn() {
                                   backgroundColor={"#F56565"}
                                   _hover={{ backgroundColor: "#FC8181" }}
                                   onClick={() => {
-                                    processRemoveExam(val)
+                                    processRemoveRecitation(val)
                                     onCloseAlertModal()
                                   }} ml={3}>
                                   Delete

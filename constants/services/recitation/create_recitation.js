@@ -2,15 +2,16 @@ import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/fir
 import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
 
-export default async function createQuiz({
-  recitationName,
+export default async function createRecitation({
+  quizName,
   roomName,
   room_id,
   teacher_email,
+  student_email,
   schedule_id,
   items
 }) {
-  const docRef = collection(db, "quiz", schedule_id, "quiz_data");
+  const docRef = collection(db, "recitation", schedule_id, "recitation_data");
   const docRefa = doc(db, "users", schedule_id);
   const docData = await getDoc(docRefa);
   const isEmailExisting = docData.exists();
@@ -25,19 +26,20 @@ export default async function createQuiz({
       room_id:room_id,
       name: roomName,
       teacher_email:teacher_email,
-      recitation_name: recitationName,
+      student_email:student_email,
+      quiz_name: quizName,
       items: items,
       create:date.toString()
     });
 
     await setDoc(logsRef, {
-      action: "CREATE_EXAM",
+      action: "CREATE_Recitation",
       creator_email: teacher_email,
       timestamp: date.toString(),
-      description: `${teacher_email} created an exam with a room id of ${room_id}`,
+      description: `${teacher_email} created an recitation with a room id of ${room_id}`,
     });
-    return { success: true, message: "Exam Created Successfully." };
+    return { success: true, message: "Recitation Created Successfully." };
   } else {
-    return { success: false, message: "Exam Creation Failed." };
+    return { success: false, message: "Recitation Creation Failed." };
   }
 }
