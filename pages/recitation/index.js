@@ -382,7 +382,7 @@ export default function SignIn() {
               paddingX={"1vw"}
               paddingY={"1vw"}
             >
-              {"Available Quizzes"}
+              {"Available Items"}
             </Text>
             <Box minH={"100%"} bg={"white"} >
               <Grid

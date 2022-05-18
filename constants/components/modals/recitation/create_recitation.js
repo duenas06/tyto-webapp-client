@@ -170,7 +170,7 @@ const CreateRecitationModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacher
   const processCreateRecitation = async () => {
     setLoading(true)
     const createRecit = await createRecitation({
-      quizName: quizName,
+      recitationName: quizName,
       room_id: roomID,
       roomName: roomName,
       teacher_email: teacherEmail,
