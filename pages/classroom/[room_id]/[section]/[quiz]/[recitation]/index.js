@@ -39,7 +39,7 @@ export default function RecitationRoom() {
     setQuizData(datas.quiz_name)
 
     if (quizData) {
-      const docRef = query(collection(db, "quiz", datas.schedule_id, "quiz_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id), where("student_email", "==", datas.student_email))
+      const docRef = query(collection(db, "recitation", datas.schedule_id, "recitation_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id), where("student_email", "==", datas.student_email))
       const unsub = onSnapshot(docRef, (studentInfo) => {
         const students = []
         studentInfo.forEach(docs => {
