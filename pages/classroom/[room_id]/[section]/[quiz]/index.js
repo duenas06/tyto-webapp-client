@@ -45,6 +45,7 @@ export default function QuizRoom() {
         studentInfo.forEach(docs => {
           students = students.concat(docs.data())
           setStudent([...student, students])
+          console.log(datas.schedule_id)
         })
    
       })

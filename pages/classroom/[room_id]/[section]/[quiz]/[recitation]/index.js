@@ -36,7 +36,7 @@ export default function RecitationRoom() {
   useEffect(() => {
     const roomData = localStorage.getItem('roomData')
     const datas = JSON.parse(roomData)
-    setQuizData(datas.quiz_name)
+    setQuizData(datas.recitation_name)
 
     if (quizData) {
       const docRef = query(collection(db, "recitation", datas.schedule_id, "recitation_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id), where("student_email", "==", datas.student_email))
@@ -45,6 +45,7 @@ export default function RecitationRoom() {
         studentInfo.forEach(docs => {
           students = students.concat(docs.data())
           setStudent([...student, students])
+          console.log(datas.schedule_id)
         })
    
       })
@@ -74,7 +75,7 @@ export default function RecitationRoom() {
                 subject={router.query.section} // subject name
                 // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
                 // end
-                recitation={router.query.quiz}
+                recitation={router.query.recitation}
                 containerStyles={{
                   height: '100vh',
                   width: '70vh'
