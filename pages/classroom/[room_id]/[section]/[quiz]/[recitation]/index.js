@@ -14,48 +14,92 @@ import {
   Spacer,
   Text,
   VStack,
-  Progress
+  Progress,
 } from "@chakra-ui/react";
 import Router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Circles } from "react-loader-spinner";
-import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  collection,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../../../../../../firebase";
-import { Jutsu } from 'react-jutsu';
+import { Jutsu } from "react-jutsu";
 import Head from "next/head";
+import unGiveRecitation from "../../../../../../constants/services/recitation/ungive_recitation";
 
 export default function RecitationRoom() {
   const router = useRouter();
-  const [startMeeting, setStartMeeting] = useState(false)
-  const [student, setStudent] = useState([])
-  const [quiz, setQuiz] = useState({})
-  const [studenta, setStudenta] = useState([])
-  const [quizData, setQuizData] = useState("")
-
+  const [startMeeting, setStartMeeting] = useState(false);
+  const [student, setStudent] = useState([]);
+  const [quiz, setQuiz] = useState({});
+  const [studenta, setStudenta] = useState([]);
+  const [quizData, setQuizData] = useState("");
 
   useEffect(() => {
-    const roomData = localStorage.getItem('roomData')
-    const datas = JSON.parse(roomData)
-    setQuizData(datas.recitation_name)
+    const roomData = localStorage.getItem("roomData");
+    const datas = JSON.parse(roomData);
+    setQuizData(datas?.recitation_name);
 
-    if (quizData) {
-      const docRef = query(collection(db, "recitation", datas.schedule_id, "recitation_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id), where("student_email", "==", datas.student_email))
+    if (datas?.recitation_name) {
+      const docRef = query(
+        collection(db, "recitation", datas.schedule_id, "recitation_answer"),
+        where("room_id", "==", datas.room_id),
+        where("schedule_id", "==", datas.schedule_id),
+        where("student_email", "==", datas.student_email)
+      );
       const unsub = onSnapshot(docRef, (studentInfo) => {
-        const students = []
-        studentInfo.forEach(docs => {
-          students = students.concat(docs.data())
-          setStudent([...student, students])
-          console.log(datas.schedule_id)
-        })
-   
-      })
-      setQuiz(datas)
+        const students = [];
+        studentInfo.forEach((docs) => {
+          students = students.concat(docs.data());
+          setStudent([...student, students]);
+          console.log(datas.schedule_id);
+        });
+      });
+      setQuiz(datas);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setStartMeeting(!startMeeting)
-  }, [2000])
+    setStartMeeting(!startMeeting);
+  }, [2000]);
+
+  async function processunGiveRecitation() {
+    const giveRecits = await unGiveRecitation({
+      room_id: quiz.room_id,
+      teacher_email: quiz.teacher_email,
+      student_email: quiz.student_email,
+      schedule_id: quiz.schedule_id,
+    });
+
+    if (giveRecits.success) {
+      toast({
+        title: "Recitation Remove Successfully",
+        description: giveRecits.message,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    } else {
+      toast({
+        title: "Recitation Remove Failed",
+        description: giveRecits.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+    }
+  }
 
   return (
     <>
@@ -67,8 +111,8 @@ export default function RecitationRoom() {
       <Box minH={"100vh"} bg={"tyto_bg"}>
         <HStack spacing={0}>
           <Box>
-            {
-              startMeeting && <Jutsu
+            {startMeeting && (
+              <Jutsu
                 // all values will come from the server
                 roomName={router.query.room_id} // will define where they will enter
                 // displayName={'FIXED_NAME_FROM_API'} // users display name
@@ -77,32 +121,37 @@ export default function RecitationRoom() {
                 // end
                 recitation={router.query.recitation}
                 containerStyles={{
-                  height: '100vh',
-                  width: '70vh'
+                  height: "100vh",
+                  width: "70vh",
                 }}
                 loadingComponent={<p>loading ...</p>}
                 errorComponent={<p>Oops, something went wrong</p>}
-                onMeetingEnd={() => router.push({ pathname: '/dashboard' })}
-
+                onMeetingEnd={() => {
+                  processunGiveRecitation();
+                  router.push({ pathname: "/dashboard" });
+                }}
                 configOverwrite={{
                   "add-people.disabled": false,
                   "invite.enabled": false,
-                  'meeting-name.enabled': false,
+                  "meeting-name.enabled": false,
                 }}
                 interfaceConfigOverwrite={{
                   "add-people.disabled": false,
                   "invite.enabled": false,
-                  'meeting-name.enabled': false,
+                  "meeting-name.enabled": false,
                 }}
               />
-            }
+            )}
           </Box>
-          <Box minH={"100vh"} width={"60%"} maxH={"100vh  "} paddingLeft={20} alignSelf="flex-end" bg={"tyto_bg"}>
-            <VStack
-              alignItems={"stretch"}
-              spacing={"10"}
-              mt={"5rem"}
-            >
+          <Box
+            minH={"100vh"}
+            width={"60%"}
+            maxH={"100vh  "}
+            paddingLeft={20}
+            alignSelf="flex-end"
+            bg={"tyto_bg"}
+          >
+            <VStack alignItems={"stretch"} spacing={"10"} mt={"5rem"}>
               <VStack alignItems={"stretch"}>
                 <Text
                   fontWeight={"bold"}
@@ -124,7 +173,6 @@ export default function RecitationRoom() {
                 alignItems={"stretch"}
                 padding={"20px"}
               >
-
                 <TableContainer>
                   <Table variant="striped" colorScheme="facebook">
                     <TableCaption>Good Luck Everyone!</TableCaption>
@@ -132,31 +180,48 @@ export default function RecitationRoom() {
                       <Tr>
                         <Th>Student Name</Th>
                         <Th>Status</Th>
-                        <Th >Items</Th>
+                        <Th>Items</Th>
+                        <Th>Submitted</Th>
+                        <Th>Score</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {student.map((val, index) => {
-                        return (
-                          val.map((dat) => {
-                            return (
-                              <Tr key={index}>
-                                <Td>{dat?.student_name}</Td>
-                                <Td><Progress hasStripe
+                        return val.map((dat) => {
+                          return (
+                            <Tr key={index}>
+                              <Td>{dat?.student_name}</Td>
+                              <Td>
+                                <Progress
+                                  hasStripe
                                   isAnimated
                                   colorScheme={"cyan"}
-                                  size='lg'
-                                  borderRadius={'md'}
+                                  size="lg"
+                                  borderRadius={"md"}
                                   value={dat?.number_answered}
-                                  max={quiz.items.length} /></Td>
-                                <Td>{dat?.number_answered}/{quiz.items.length}</Td>
-                              </Tr>
-                            )
-                          })
-                        )
+                                  max={quiz.items.length}
+                                />
+                              </Td>
+                              <Td>
+                                {dat?.number_answered}/{quiz.items.length}
+                              </Td>
+
+                              <Td>
+                                {dat?.recitation_submitted ? "YES" : "NO"}
+                              </Td>
+
+                              <Td>
+                                {dat?.recitation_results.length === 0
+                                  ? "0"
+                                  : dat?.recitation_results.filter(
+                                      (data) => data.is_correct === true
+                                    ).length}
+                              </Td>
+                            </Tr>
+                          );
+                        });
                       })}
                     </Tbody>
-
                   </Table>
                 </TableContainer>
               </VStack>

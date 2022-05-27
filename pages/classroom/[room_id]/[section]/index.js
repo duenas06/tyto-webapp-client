@@ -11,51 +11,93 @@ import {
   TableCaption,
   TableContainer,
   Heading,
+  useToast,
   Spacer,
   Text,
   VStack,
-  Progress
+  Progress,
 } from "@chakra-ui/react";
 import Router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Circles } from "react-loader-spinner";
-import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  collection,
+  updateDoc,
+  query,
+  where,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "../../../../firebase";
-import { Jutsu } from 'react-jutsu';
+import { Jutsu } from "react-jutsu";
 import Head from "next/head";
+import unGiveExam from "../../../../constants/services/exams/ungive_exam";
 
 export default function ClassRoom() {
   const router = useRouter();
-  const [startMeeting, setStartMeeting] = useState(false)
-  const [student, setStudent] = useState([])
-  const [exam, setExam] = useState({})
-
+  const [startMeeting, setStartMeeting] = useState(false);
+  const [student, setStudent] = useState([]);
+  const [exam, setExam] = useState({});
+  const toast = useToast();
 
   useEffect(() => {
-    const roomData = localStorage.getItem('roomData')
-    const datas = JSON.parse(roomData)
-    if(datas){
-      const docRef = query(collection(db, "exams", datas.schedule_id, "exam_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id))
+    const roomData = localStorage.getItem("roomData");
+    const datas = JSON.parse(roomData);
+    if (datas) {
+      const docRef = query(
+        collection(db, "exams", datas.schedule_id, "exam_answer"),
+        where("room_id", "==", datas.room_id),
+        where("schedule_id", "==", datas.schedule_id)
+      );
       const unsub = onSnapshot(docRef, (studentInfo) => {
-        const students = []
-        studentInfo.forEach(docs => {
-          students = students.concat(docs.data())
-          setStudent([...student, students])
-        })
-      })
+        const students = [];
+        studentInfo.forEach((docs) => {
+          students = students.concat(docs.data());
+          setStudent([...student, students]);
+        });
+      });
     }
-      setExam(datas)
-  }, [])
+    setExam(datas);
+  }, []);
 
   useEffect(() => {
-    console.log(student)
-    setStartMeeting(!startMeeting)
-  }, [5000])
+    console.log(student);
+    setStartMeeting(!startMeeting);
+  }, [5000]);
 
   useEffect(() => {
     localStorage.removeItem("roomData");
-  },[2000])
+  }, [2000]);
 
+  async function processRemoveExam() {
+    const giveExams = await unGiveExam({
+      room_id: exam.room_id,
+      teacher_email: exam.teacher_email,
+      schedule_id: exam.schedule_id,
+    });
+
+    if (giveExams.success) {
+      toast({
+        title: "Exam Removed Successfully",
+        description: giveExams.message,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        title: "Exam Removed Failed",
+        description: giveExams.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }
 
   return (
     <>
@@ -65,10 +107,10 @@ export default function ClassRoom() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box minH={"100vh"} bg={"tyto_bg"}>
-        {student.length === 0 ?
+        {student.length === 0 ? (
           <Box>
-            {
-              startMeeting && <Jutsu
+            {startMeeting && (
+              <Jutsu
                 // all values will come from the server
                 roomName={router.query.room_id} // will define where they will enter
                 // displayName={'FIXED_NAME_FROM_API'} // users display name
@@ -76,31 +118,33 @@ export default function ClassRoom() {
                 // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
                 // end
                 containerStyles={{
-                  height: '100vh',
-                  width: '100%'
+                  height: "100vh",
+                  width: "100%",
                 }}
                 loadingComponent={<p>loading ...</p>}
                 errorComponent={<p>Oops, something went wrong</p>}
-                onMeetingEnd={() => router.push({ pathname: '/dashboard' })}
-
+                onMeetingEnd={() => {
+                  processRemoveExam();
+                  router.push({ pathname: "/dashboard" });
+                }}
                 configOverwrite={{
                   "add-people.disabled": false,
                   "invite.enabled": false,
-                  'meeting-name.enabled': false,
+                  "meeting-name.enabled": false,
                 }}
                 interfaceConfigOverwrite={{
                   "add-people.disabled": false,
                   "invite.enabled": false,
-                  'meeting-name.enabled': false,
+                  "meeting-name.enabled": false,
                 }}
               />
-            }
+            )}
           </Box>
-          :
+        ) : (
           <HStack spacing={0}>
             <Box>
-              {
-                startMeeting && <Jutsu
+              {startMeeting && (
+                <Jutsu
                   // all values will come from the server
                   roomName={router.query.room_id} // will define where they will enter
                   // displayName={'FIXED_NAME_FROM_API'} // users display name
@@ -108,32 +152,37 @@ export default function ClassRoom() {
                   // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
                   // end
                   containerStyles={{
-                    height: '100vh',
-                    width: '70vh'
+                    height: "100vh",
+                    width: "70vh",
                   }}
                   loadingComponent={<p>loading ...</p>}
                   errorComponent={<p>Oops, something went wrong</p>}
-                  onMeetingEnd={() => router.push({ pathname: '/dashboard' })}
-
+                  onMeetingEnd={() => {
+                    processRemoveExam();
+                    router.push({ pathname: "/dashboard" });
+                  }}
                   configOverwrite={{
                     "add-people.disabled": false,
                     "invite.enabled": false,
-                    'meeting-name.enabled': false,
+                    "meeting-name.enabled": false,
                   }}
                   interfaceConfigOverwrite={{
                     "add-people.disabled": false,
                     "invite.enabled": false,
-                    'meeting-name.enabled': false,
+                    "meeting-name.enabled": false,
                   }}
                 />
-              }
+              )}
             </Box>
-            <Box minH={"100vh"} width={"60%"} maxH={"100vh  "} paddingLeft={20} alignSelf="flex-end" bg={"tyto_bg"}>
-              <VStack
-                alignItems={"stretch"}
-                spacing={"10"}
-                mt={"5rem"}
-              >
+            <Box
+              minH={"100vh"}
+              width={"60%"}
+              maxH={"100vh  "}
+              paddingLeft={20}
+              alignSelf="flex-end"
+              bg={"tyto_bg"}
+            >
+              <VStack alignItems={"stretch"} spacing={"10"} mt={"5rem"}>
                 <VStack alignItems={"stretch"}>
                   <Text
                     fontWeight={"bold"}
@@ -155,7 +204,6 @@ export default function ClassRoom() {
                   alignItems={"stretch"}
                   padding={"20px"}
                 >
-
                   <TableContainer>
                     <Table variant="striped" colorScheme="facebook">
                       <TableCaption>Good Luck Everyone!</TableCaption>
@@ -163,39 +211,50 @@ export default function ClassRoom() {
                         <Tr>
                           <Th>Student Name</Th>
                           <Th>Status</Th>
-                          <Th >Items</Th>
+                          <Th>Items</Th>
+                          <Th>Submitted</Th>
+                          <Th>Score</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
                         {student.map((val, index) => {
-                          return (
-                            val.map((dat) => {
-                              return (
-                                <Tr key={index}>
-                                  <Td>{dat?.student_name}</Td>
-                                  <Td><Progress hasStripe
+                          return val.map((dat) => {
+                            return (
+                              <Tr key={index}>
+                                <Td>{dat?.student_name}</Td>
+                                <Td>
+                                  <Progress
+                                    hasStripe
                                     isAnimated
-
-                                    size='lg'
-                                    borderRadius={'md'}
+                                    size="lg"
+                                    borderRadius={"md"}
                                     value={dat?.number_answered}
-                                    max={exam.items.length} /></Td>
-                                  <Td>{dat?.number_answered}/{exam.items.length}</Td>
-                                </Tr>
-                              )
-                            })
-                          )
+                                    max={exam?.items.length}
+                                  />
+                                </Td>
+                                <Td>
+                                  {dat?.number_answered}/{exam.items.length}
+                                </Td>
+                                <Td>{dat?.exam_submitted ? "YES" : "NO"}</Td>
+                                <Td>
+                                  {dat?.exam_results.length === 0
+                                    ? "0"
+                                    : dat?.exam_results.filter(
+                                        (data) => data.is_correct === true
+                                      ).length}
+                                </Td>
+                              </Tr>
+                            );
+                          });
                         })}
                       </Tbody>
-
                     </Table>
                   </TableContainer>
                 </VStack>
               </VStack>
             </Box>
           </HStack>
-        }
-
+        )}
       </Box>
     </>
   );
