@@ -22,13 +22,6 @@ const IndexNavBar = (props) => {
       >
         TYTO
       </Heading>
-      <Text
-        flex={'1'}
-        fontSize={'xl'}
-        cursor={'pointer'}
-      >
-        FAQ
-      </Text>
       <Text flex={'2'} fontSize={'xl'} cursor={'pointer'}>
         TYTO Student App
       </Text>

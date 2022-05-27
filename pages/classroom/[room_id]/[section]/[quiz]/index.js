@@ -37,7 +37,7 @@ export default function QuizRoom() {
     const roomData = localStorage.getItem('roomData')
     const datas = JSON.parse(roomData)
     setQuizData(datas.quiz_name)
-
+    console.log(datas)
     if (quizData) {
       const docRef = query(collection(db, "quiz", datas.schedule_id, "quiz_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id))
       const unsub = onSnapshot(docRef, (studentInfo) => {
@@ -45,7 +45,7 @@ export default function QuizRoom() {
         studentInfo.forEach(docs => {
           students = students.concat(docs.data())
           setStudent([...student, students])
-          console.log(datas.schedule_id)
+          
         })
    
       })

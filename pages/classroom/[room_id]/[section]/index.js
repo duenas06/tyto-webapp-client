@@ -32,10 +32,13 @@ export default function ClassRoom() {
 
 
   useEffect(() => {
-    const roomData = localStorage.getItem('roomData')
+    const roomData = localStorage.getItem('room')
     const datas = JSON.parse(roomData)
-    if(datas){
-      const docRef = query(collection(db, "exams", datas.schedule_id, "exam_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id))
+
+    if (datas) {
+      const docRef = query(collection(db, "exams", datas.schedule_id, "exam_answer"), where("room_id", "==", datas.room_id), 
+      where("schedule_id", "==", datas.schedule_id),
+      where("exam_submitted", "==", true))
       const unsub = onSnapshot(docRef, (studentInfo) => {
         const students = []
         studentInfo.forEach(docs => {
@@ -44,17 +47,15 @@ export default function ClassRoom() {
         })
       })
     }
-      setExam(datas)
+    setExam(datas)
   }, [])
 
   useEffect(() => {
     console.log(student)
     setStartMeeting(!startMeeting)
-  }, [5000])
+  }, [])
 
-  useEffect(() => {
-    localStorage.removeItem("roomData");
-  },[2000])
+
 
 
   return (
@@ -65,40 +66,8 @@ export default function ClassRoom() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box minH={"100vh"} bg={"tyto_bg"}>
-        {student.length === 0 ?
-          <Box>
-            {
-              startMeeting && <Jutsu
-                // all values will come from the server
-                roomName={router.query.room_id} // will define where they will enter
-                // displayName={'FIXED_NAME_FROM_API'} // users display name
-                subject={router.query.section} // subject name
-                // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
-                // end
-                containerStyles={{
-                  height: '100vh',
-                  width: '100%'
-                }}
-                loadingComponent={<p>loading ...</p>}
-                errorComponent={<p>Oops, something went wrong</p>}
-                onMeetingEnd={() => router.push({ pathname: '/dashboard' })}
-
-                configOverwrite={{
-                  "add-people.disabled": false,
-                  "invite.enabled": false,
-                  'meeting-name.enabled': false,
-                }}
-                interfaceConfigOverwrite={{
-                  "add-people.disabled": false,
-                  "invite.enabled": false,
-                  'meeting-name.enabled': false,
-                }}
-              />
-            }
-          </Box>
-          :
-          <HStack spacing={0}>
-            <Box>
+        <HStack spacing={0}>
+            <Box width={(exam? "50%" : "80%")} bg={"cyan"}>
               {
                 startMeeting && <Jutsu
                   // all values will come from the server
@@ -109,11 +78,14 @@ export default function ClassRoom() {
                   // end
                   containerStyles={{
                     height: '100vh',
-                    width: '70vh'
+                    width: '100%'
                   }}
                   loadingComponent={<p>loading ...</p>}
                   errorComponent={<p>Oops, something went wrong</p>}
-                  onMeetingEnd={() => router.push({ pathname: '/dashboard' })}
+                  onMeetingEnd={() => {
+                    router.push({ pathname: '/dashboard' })
+                    setStudent([]);
+                    setExam({})}}
 
                   configOverwrite={{
                     "add-people.disabled": false,
@@ -128,7 +100,11 @@ export default function ClassRoom() {
                 />
               }
             </Box>
-            <Box minH={"100vh"} width={"60%"} maxH={"100vh  "} paddingLeft={20} alignSelf="flex-end" bg={"tyto_bg"}>
+            {student.length === 0 ?
+            <></>
+            :
+
+            <Box minH={"100vh"} width={"60%"} maxH={"100vh"} paddingLeft={20} alignSelf="flex-end" bg={"tyto_bg"}>
               <VStack
                 alignItems={"stretch"}
                 spacing={"10"}
@@ -175,7 +151,6 @@ export default function ClassRoom() {
                                   <Td>{dat?.student_name}</Td>
                                   <Td><Progress hasStripe
                                     isAnimated
-
                                     size='lg'
                                     borderRadius={'md'}
                                     value={dat?.number_answered}
@@ -193,9 +168,9 @@ export default function ClassRoom() {
                 </VStack>
               </VStack>
             </Box>
-          </HStack>
-        }
 
+          }
+        </HStack>
       </Box>
     </>
   );

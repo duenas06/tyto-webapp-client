@@ -35,11 +35,11 @@ import giveExam from "../../constants/services/exams/give_exam";
 import removeExam from "../../constants/services/exams/remove_exam";
 const NavBarMenuSection = () => {
   const menuItems = [
-    { name: "Dashboard", link: "/dashboard" },
-    { name: "Exam", link: "/exam" },
-    { name: "Quiz", link: "/quiz" },
-    { name: "Recitation", link: "/recitation" },
-    { name: "Sign Out", link: "/sign-in" },
+    { name: "Dashboard", link: "/dashboard", icon: "/dashboard.png" },
+    { name: "Exam", link: "/exam", icon: "/exam.png" },
+    { name: "Quiz", link: "/quiz", icon: "/quiz.png" },
+    { name: "Recitation", link: "/recitation", icon: "/recitation.png" },
+    { name: "Sign Out", link: "/sign-in", icon: "/sign-out.png" },
   ];
   const currentMenuSelected = 1;
   return (
@@ -54,14 +54,26 @@ const NavBarMenuSection = () => {
             spacing={"1.5vw"}
             key={index}
             cursor={"pointer"}
-            onClick={() => Router.push({ pathname: menuItem.link })}
+            onClick={() => {
+              if (menuItem.name === "Sign Out") {
+                Router.push({ pathname: menuItem.link })
+                localStorage.clear()
+              }
+              else {
+                Router.push({ pathname: menuItem.link })
+              }
+            }}
+
           >
             <Box
               height={"10"}
               width={"10"}
+              padding="1vh"
               backgroundColor="tyto_teal"
               borderRadius={"full"}
-            />
+            > <Image
+                src={menuItem.icon} />
+            </Box>
             <Text
               fontSize={"sm"}
               _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}
@@ -79,14 +91,12 @@ const DashboardNavigationBar = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
         router.push("/sign-in");
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [2000])
   }, []);
 
   async function getloadData(props) {
@@ -111,12 +121,16 @@ const DashboardNavigationBar = () => {
       <Box height={"2vh"} />
 
       <HStack spacing={"1vw"}>
-        <Box
+      <Box
           height={"14"}
           width={"14"}
           backgroundColor="tyto_teal"
           borderRadius={"full"}
-        />
+          padding="1.5vh"
+        ><Image
+            src={"/user.png"}
+            height={"7"}
+            width={"7"} /></Box>
         <VStack alignItems={"stretch"}>
           <Text fontWeight={"bold"}>{data.fullname}</Text>
           <Text fontSize={"xs"}>Teacher</Text>
@@ -453,14 +467,14 @@ export default function SignIn() {
                             _active={{ backgroundColor: "#06D7A0" }}
                             _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
                             onClick={() => {
-                              router.push({
-                                pathname: "/classroom/[room_id]/[section]",
-                                query: {
-                                  room_id: val?.room_id,
-                                  section: val?.name,
-                                },
-                              })
-                              localStorage.setItem('roomData', JSON.stringify(val))
+                              // router.push({
+                              //   pathname: "/classroom/[room_id]/[section]",
+                              //   query: {
+                              //     room_id: val?.room_id,
+                              //     section: val?.name,
+                              //   },
+                              // })
+                              localStorage.setItem('room', JSON.stringify(val))
                               processGiveExam(val);
                               setRoomInfo(val)
                             }}
