@@ -45,15 +45,6 @@ export default function ClassRoom() {
   const toast = useToast();
 
   useEffect(() => {
-<<<<<<< HEAD
-    const roomData = localStorage.getItem('room')
-    const datas = JSON.parse(roomData)
-
-    if (datas) {
-      const docRef = query(collection(db, "exams", datas.schedule_id, "exam_answer"), where("room_id", "==", datas.room_id), 
-      where("schedule_id", "==", datas.schedule_id),
-      where("exam_submitted", "==", true))
-=======
     const roomData = localStorage.getItem("roomData");
     const datas = JSON.parse(roomData);
     if (datas) {
@@ -62,7 +53,6 @@ export default function ClassRoom() {
         where("room_id", "==", datas.room_id),
         where("schedule_id", "==", datas.schedule_id)
       );
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
       const unsub = onSnapshot(docRef, (studentInfo) => {
         const students = [];
         studentInfo.forEach((docs) => {
@@ -71,17 +61,6 @@ export default function ClassRoom() {
         });
       });
     }
-<<<<<<< HEAD
-    setExam(datas)
-  }, [])
-
-  useEffect(() => {
-    console.log(student)
-    setStartMeeting(!startMeeting)
-  }, [])
-
-
-=======
     setExam(datas);
   }, []);
 
@@ -93,7 +72,6 @@ export default function ClassRoom() {
   useEffect(() => {
     localStorage.removeItem("roomData");
   }, [2000]);
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
 
   async function processRemoveExam() {
     const giveExams = await unGiveExam({
@@ -129,12 +107,6 @@ export default function ClassRoom() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box minH={"100vh"} bg={"tyto_bg"}>
-<<<<<<< HEAD
-        <HStack spacing={0}>
-            <Box width={(exam? "50%" : "80%")} bg={"cyan"}>
-              {
-                startMeeting && <Jutsu
-=======
         {student.length === 0 ? (
           <Box>
             {startMeeting && (
@@ -173,7 +145,6 @@ export default function ClassRoom() {
             <Box>
               {startMeeting && (
                 <Jutsu
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
                   // all values will come from the server
                   roomName={router.query.room_id} // will define where they will enter
                   // displayName={'FIXED_NAME_FROM_API'} // users display name
@@ -181,27 +152,15 @@ export default function ClassRoom() {
                   // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
                   // end
                   containerStyles={{
-<<<<<<< HEAD
-                    height: '100vh',
-                    width: '100%'
-=======
                     height: "100vh",
                     width: "70vh",
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
                   }}
                   loadingComponent={<p>loading ...</p>}
                   errorComponent={<p>Oops, something went wrong</p>}
                   onMeetingEnd={() => {
-<<<<<<< HEAD
-                    router.push({ pathname: '/dashboard' })
-                    setStudent([]);
-                    setExam({})}}
-
-=======
                     processRemoveExam();
                     router.push({ pathname: "/dashboard" });
                   }}
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
                   configOverwrite={{
                     "add-people.disabled": false,
                     "invite.enabled": false,
@@ -215,18 +174,6 @@ export default function ClassRoom() {
                 />
               )}
             </Box>
-<<<<<<< HEAD
-            {student.length === 0 ?
-            <></>
-            :
-
-            <Box minH={"100vh"} width={"60%"} maxH={"100vh"} paddingLeft={20} alignSelf="flex-end" bg={"tyto_bg"}>
-              <VStack
-                alignItems={"stretch"}
-                spacing={"10"}
-                mt={"5rem"}
-              >
-=======
             <Box
               minH={"100vh"}
               width={"60%"}
@@ -236,7 +183,6 @@ export default function ClassRoom() {
               bg={"tyto_bg"}
             >
               <VStack alignItems={"stretch"} spacing={"10"} mt={"5rem"}>
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
                 <VStack alignItems={"stretch"}>
                   <Text
                     fontWeight={"bold"}
@@ -280,13 +226,8 @@ export default function ClassRoom() {
                                   <Progress
                                     hasStripe
                                     isAnimated
-<<<<<<< HEAD
-                                    size='lg'
-                                    borderRadius={'md'}
-=======
                                     size="lg"
                                     borderRadius={"md"}
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
                                     value={dat?.number_answered}
                                     max={exam?.items.length}
                                   />
@@ -312,14 +253,8 @@ export default function ClassRoom() {
                 </VStack>
               </VStack>
             </Box>
-<<<<<<< HEAD
-
-          }
-        </HStack>
-=======
           </HStack>
         )}
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
       </Box>
     </>
   );
