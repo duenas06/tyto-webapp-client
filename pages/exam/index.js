@@ -12,6 +12,7 @@ import {
   Image,
   useToast,
   Grid,
+  GridItem,
   AlertDialog,
   AlertDialogBody,
   AlertDialogFooter,
@@ -148,7 +149,6 @@ const DashboardNavigationBar = () => {
 export default function SignIn() {
   const [value, onChange] = useState(new Date());
   const router = useRouter();
-  const userDataContext = useContext(UserDataContext);
   const [data, setData] = useState({});
   const [exam, setExam] = useState([])
   const [loading, setLoading] = useState(false);
@@ -399,6 +399,7 @@ export default function SignIn() {
                 gap={4}
                 borderRadius={"lg"}
               >
+                <GridItem>
                 <Button
                   maxW={"20vw"}
                   height={"fit-content"}
@@ -416,10 +417,8 @@ export default function SignIn() {
                         status: "error",
                         duration: 5000,
                         isClosable: true,
-                      });
-                    }
-                  }}
-                >
+                      });}}}>
+
                   <VStack
                     height={"20vh"}
                     width={"25.5vh"}
@@ -429,17 +428,17 @@ export default function SignIn() {
                     paddingY={"2vh"}
                     borderRadius={"xl"}
                     justifyContent={"center"}
-                    cursor={"hand"}
-
-                  >
+                    cursor={"hand"}>
                     <Image boxSize="124" src="/createquiz.svg" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }} />
                     <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD EXAM</Text>
                   </VStack>
                 </Button>
+                </GridItem>
                 {exam[0]?.map((val, index) => {
 
                   if (val) {
                     return (
+                      <GridItem>
                       <VStack
                         height={"20vh"}
                         maxW={"20vw"}
@@ -529,9 +528,8 @@ export default function SignIn() {
                             </AlertDialogContent>
                           </AlertDialogOverlay>
                         </AlertDialog>
-
                       </VStack>
-
+                      </GridItem>
                     )
                   }
                 })}

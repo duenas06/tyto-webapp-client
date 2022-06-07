@@ -285,7 +285,7 @@ export default function SignIn() {
                         <Text color="white" fontWeight="bold" fontSize={"2xl"} textAlign={"center"}>
                           {val?.name}
                         </Text>
-                        <Text color="white">{val?.time}</Text>
+                        <Text fontSize={"sm"} color="white">{val?.time}</Text>
                         <Spacer />
                         <Button
                           variant={"solid"}

@@ -24,9 +24,10 @@ import { useEffect, useState, useReducer } from "react";
 const GiveExamModal = ({ isOpen, onClose}) => {
     const [data, setData] = useState({});
     const [exam, setExam] = useState([])
+    const [schedule, setSchedule] = useState([])
     const [loading, setLoading] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [schedule, setSchedule] = useState([])
+
  
   useEffect(() => {
 
