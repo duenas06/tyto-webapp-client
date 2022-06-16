@@ -124,7 +124,7 @@ const DashboardNavigationBar = () => {
           borderRadius={"full"}
         />
         <VStack alignItems={"stretch"}>
-          <Text fontWeight={"bold"}>{data.fullname}</Text>
+          <Text fontWeight={"bold"}>{data.fullname ? data.fullname : 'Loading...'}</Text>
           <Text fontSize={"xs"}>Teacher</Text>
         </VStack>
       </HStack>
@@ -337,7 +337,11 @@ export default function SignIn() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box minH={"100vh"} bg={"white"}>
+      {
+        !data.fullname?
+        <Text>Loading...</Text>
+        :
+        <Box minH={"100vh"} bg={"white"}>
         <HStack height={"100vh"} alignItems={"stretch"}>
           <DashboardNavigationBar />
           <CreateRecitationModal
@@ -534,72 +538,9 @@ export default function SignIn() {
               </Grid>
             </Box>
           </VStack>
-          <Divider orientation="vertical" />
-          <VStack
-            minWidth={"350px"}
-            paddingY={"1vh"}
-            paddingRight={"1vw"}
-            alignItems={"stretch"}
-            backgroundColor={"white"}
-          >
-            <VStack
-              alignItems={"stretch"}
-              paddingX={"1vw"}
-              paddingY={"1vw"}
-              borderRadius={"lg"}
-              spacing={"5"}
-            >
-              <Text fontWeight={"bold"} fontSize={"xl"} color={"tyto_black"}>
-                {"Ongoing Class"}
-              </Text>
-              <HStack
-                backgroundColor={"tyto_teal"}
-                paddingX={"1vw"}
-                paddingY={"2vh"}
-                borderRadius={"lg"}
-              >
-                <Text color="white" fontWeight="bold">
-                  {roomInfo.name} Section
-                </Text>
-                <Spacer />
-                <Button
-                  variant={"solid"}
-                  backgroundColor={"#06D7A0"}
-                  _hover={{ backgroundColor: "#06D7A0" }}
-                  _active={{ backgroundColor: "#06D7A0" }}
-                  onClick={() =>
-                    router.push({
-                      pathname: "/classroom/[room_id]/[section]",
-                      query: {
-                        room_id: roomInfo?.room_id || "2",
-                        section: roomInfo?.name || "Sapphire"
-                      }
-                    })}
-                >
-                  Join
-                </Button>
-              </HStack>
-            </VStack>
-            <VStack
-              alignItems={"stretch"}
-              paddingX={"1vw"}
-              paddingY={"1vw"}
-              borderRadius={"lg"}
-              spacing={"5"}
-            >
-              <Text fontWeight={"bold"} fontSize={"xl"} color={"tyto_black"}>
-                {"My Calendar"}
-              </Text>
-              <Calendar
-                onChange={onChange}
-                value={value}
-                onClickDay={(val) => alert(val)}
-                calendarType="US"
-              />
-            </VStack>
-          </VStack>
         </HStack>
-      </Box>
+        </Box>
+      }
     </>
   );
 }

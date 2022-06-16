@@ -16,15 +16,13 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
-import { useState, useEffect, useContext } from "react";
-import Calendar from "react-calendar";
-import { Circles } from "react-loader-spinner";
+import { useState, useEffect, useContext, useRef } from "react";
 import UserDataContext from "../../src/context/UserDataContext";
 import "react-calendar/dist/Calendar.css";
 import { db } from "../../firebase";
-import { collection, query, where, getDoc, doc, getDocs } from "@firebase/firestore";
+import {getDoc, doc } from "@firebase/firestore";
 import Head from "next/head";
-
+import CalendarSchedule from "./calendar";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
@@ -133,6 +131,9 @@ export default function SignIn() {
   const [schedule, setSchedule] = useState([])
   const [loading, setLoading] = useState(false);
   const [roomInfo, setRoomInfo] = useState({})
+  const calendarRef = useRef()
+
+
   useEffect(() => {
 
     setTimeout(() => {
@@ -172,7 +173,7 @@ export default function SignIn() {
 
       const GEIGHT_REF = await getDoc(GRADE_EIGHT);
 
-      schedules = schedules.concat(GEIGHT_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(GEIGHT_REF.data().subjects?.filter(({ teacher_email }) => teacher_email === props))
 
       //GRADE NINE
       const GRADE_NINE = doc(db,
@@ -233,134 +234,9 @@ export default function SignIn() {
             </HStack>
 
             <Divider width={"90%"} alignSelf={"center"} />
-
-            <Text
-              fontWeight={"bold"}
-              fontSize={"xl"}
-              color={"tyto_black"}
-              paddingX={"1vw"}
-              paddingY={"1vw"}
-            >
-              {"Today's Schedule"}
-            </Text>
             <Box minH={"100%"} bg={"white"} >
-              <Stack direction={["column", "column", "row"]}
-                alignItems={"stretch"}
-                paddingX={"1vw"}
-                paddingY={"1vw"}
-                borderRadius={"lg"}
-              >
-                {schedule[0]?.map((val, index) => {
-                  if (val) {
-                    return (
-                      <VStack
-                        height={"18vh"}
-                        maxW={"20vw"}
-                        flex={1}
-                        backgroundColor={"tyto_teal"}
-                        paddingX={"1vw"}
-                        paddingY={"2vh"}
-                        borderRadius={"lg"}
-                        justifyContent={"center"}
-                        cursor={"auto"}
-                        _hover={{ shadow: "lg" }}
-                        key={index}
-                      >
-                        <Text color="white" fontWeight="bold" fontSize={"2xl"} textAlign={"center"}>
-                          {val?.name}
-                        </Text>
-                        <Text fontSize={"sm"} color="white">{val?.time}</Text>
-                        <Spacer />
-                        <Button
-                          variant={"solid"}
-                          width={"100%"}
-                          alignSelf="flex-end"
-                          backgroundColor={"#06D7A0"}
-                          _hover={{ backgroundColor: "#06D7A0" }}
-                          _active={{ backgroundColor: "#06D7A0" }}
-                          onClick={() => {
-                            router.push({
-                              pathname: "/classroom/[room_id]/[section]",
-                              query: {
-                                room_id: val?.room_id,
-                                section: val?.name
-                              }
-                            })
-                            setRoomInfo(val)
-                          }}
-                        >
-                          Join
-                        </Button>
-                      </VStack>
-                    )
-                  }
-                })}
-              </Stack>
+              {schedule.length != 0 && <CalendarSchedule schedule={schedule}/>}
             </Box>
-          </VStack>
-          <Divider orientation="vertical" />
-          <VStack
-            minWidth={"350px"}
-            paddingY={"1vh"}
-            paddingRight={"1vw"}
-            alignItems={"stretch"}
-            backgroundColor={"white"}
-          >
-            <VStack
-              alignItems={"stretch"}
-              paddingX={"1vw"}
-              paddingY={"1vw"}
-              borderRadius={"lg"}
-              spacing={"5"}
-            >
-              <Text fontWeight={"bold"} fontSize={"xl"} color={"tyto_black"}>
-                {"Ongoing Class"}
-              </Text>
-              <HStack
-                backgroundColor={"tyto_teal"}
-                paddingX={"1vw"}
-                paddingY={"2vh"}
-                borderRadius={"lg"}
-              >
-                <Text color="white" fontWeight="bold">
-                  {roomInfo.name} Section
-                </Text>
-                <Spacer />
-                <Button
-                  variant={"solid"}
-                  backgroundColor={"#06D7A0"}
-                  _hover={{ backgroundColor: "#06D7A0" }}
-                  _active={{ backgroundColor: "#06D7A0" }}
-                  onClick={() =>
-                    router.push({
-                      pathname: "/classroom/[room_id]/[section]",
-                      query: {
-                        room_id: roomInfo?.room_id || "2",
-                        section: roomInfo?.name || "Sapphire"
-                      }
-                    })}
-                >
-                  Join
-                </Button>
-              </HStack>
-            </VStack>
-            <VStack
-              alignItems={"stretch"}
-              paddingX={"1vw"}
-              paddingY={"1vw"}
-              borderRadius={"lg"}
-              spacing={"5"}
-            >
-              <Text fontWeight={"bold"} fontSize={"xl"} color={"tyto_black"}>
-                {"My Calendar"}
-              </Text>
-              <Calendar
-                onChange={onChange}
-                value={value}
-                onClickDay={(val) => alert(val)}
-                calendarType="US"
-              />
-            </VStack>
           </VStack>
         </HStack>
       </Box>

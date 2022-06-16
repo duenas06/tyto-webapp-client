@@ -2,13 +2,27 @@
 //   reactStrictMode: true,
 // }
 
+const withTM = require("next-transpile-modules")([
+  "@fullcalendar/common",
+  "@babel/preset-react",
+  "@fullcalendar/common",
+  "@fullcalendar/daygrid",
+  "@fullcalendar/interaction",
+  "@fullcalendar/react",
+  "@fullcalendar/timegrid",
+  "@fullcalendar/luxon2",
+  "@fullcalendar/rrule",
+  "@fullcalendar/list",
+  "@fullcalendar/core"
+]);
+
 const {
   PHASE_DEVELOPMENT_SERVER,
   PHASE_PRODUCTION_BUILD,
 } = require("next/constants");
 
 // This uses phases as outlined here: https://nextjs.org/docs/#custom-configuration
-module.exports = (phase) => {
+module.exports = withTM((phase) => {
   // when started in development mode `next dev` or `npm run dev` regardless of the value of STAGING environmental variable
 
   const isDev = phase === PHASE_DEVELOPMENT_SERVER;
@@ -37,6 +51,6 @@ module.exports = (phase) => {
     env,
     images: {
       domains: ["firebasestorage.googleapis.com"],
-    },
+    },  
   };
-};
+});
