@@ -44,24 +44,6 @@ export default function QuizRoom() {
   const [quizData, setQuizData] = useState("");
 
   useEffect(() => {
-<<<<<<< HEAD
-    const roomData = localStorage.getItem('roomData')
-    const datas = JSON.parse(roomData)
-    setQuizData(datas.quiz_name)
-    console.log(datas)
-    if (quizData) {
-      const docRef = query(collection(db, "quiz", datas.schedule_id, "quiz_answer"), where("room_id", "==", datas.room_id), where("schedule_id", "==", datas.schedule_id))
-      const unsub = onSnapshot(docRef, (studentInfo) => {
-        const students = []
-        studentInfo.forEach(docs => {
-          students = students.concat(docs.data())
-          setStudent([...student, students])
-          
-        })
-   
-      })
-      setQuiz(datas)
-=======
     const roomData = localStorage.getItem("roomData");
     const datas = JSON.parse(roomData);
     setQuizData(datas.quiz_name);
@@ -81,7 +63,6 @@ export default function QuizRoom() {
         });
       });
       setQuiz(datas);
->>>>>>> 294a081b7a227aa9526ebd10f9ec50645d77292a
     }
   }, []);
 

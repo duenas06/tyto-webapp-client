@@ -115,7 +115,7 @@ export default function RecitationRoom() {
               <Jutsu
                 // all values will come from the server
                 roomName={router.query.room_id} // will define where they will enter
-                // displayName={'FIXED_NAME_FROM_API'} // users display name
+                // displayName={'FIXED_NAME'} // users display name
                 subject={router.query.section} // subject name
                 // password={'sampl3Passw0rd'} // encrypted password to avoid unexpected audience
                 // end
