@@ -1,4 +1,5 @@
 import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs, deleteDoc } from "firebase/firestore";
+import Router from "next/router";
 import { db } from "../../../firebase";
 
 export default async function removeQuiz({
@@ -28,6 +29,7 @@ export default async function removeQuiz({
       description: `${teacher_email} removed an quiz with a room id of ${room_id}`,
     });
 
+    Router.reload(window.location.pathname)
     return { success: true, message: "Quiz Removed Successfully." };
   } else {
     return { success: false, message: "Quiz Operation Failed." };

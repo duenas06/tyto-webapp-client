@@ -1,4 +1,5 @@
 import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/firestore";
+import Router from "next/router";
 import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
 
@@ -36,6 +37,7 @@ export default async function createExam({
       timestamp: date.toString(),
       description: `${teacher_email} created an exam with a room id of ${room_id}`,
     });
+    Router.reload(window.location.pathname)
     return { success: true, message: "Exam Created Successfully." };
   } else {
     return { success: false, message: "Exam Creation Failed." };

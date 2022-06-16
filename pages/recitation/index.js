@@ -41,11 +41,11 @@ import removeRecitation from "../../constants/services/recitation/remove_recitat
 import giveRecitation from "../../constants/services/recitation/give_recitation";
 const NavBarMenuSection = () => {
   const menuItems = [
-    { name: "Dashboard", link: "/dashboard", icon: "/dashboard.png" },
-    { name: "Exam", link: "/exam", icon: "/exam.png" },
-    { name: "Quiz", link: "/quiz", icon: "/quiz.png" },
-    { name: "Recitation", link: "/recitation", icon: "/recitation.png" },
-    { name: "Sign Out", link: "/sign-in", icon: "/sign-out.png" },
+    { name: "Dashboard", link: "/dashboard" },
+    { name: "Exam", link: "/exam" },
+    { name: "Quiz", link: "/quiz" },
+    { name: "Recitation", link: "/recitation" },
+    { name: "Sign Out", link: "/sign-in" },
   ];
   const currentMenuSelected = 3;
   return (
@@ -60,26 +60,14 @@ const NavBarMenuSection = () => {
             spacing={"1.5vw"}
             key={index}
             cursor={"pointer"}
-            onClick={() => {
-              if (menuItem.name === "Sign Out") {
-                Router.push({ pathname: menuItem.link })
-                localStorage.clear()
-              }
-              else {
-                Router.push({ pathname: menuItem.link })
-              }
-            }}
-
+            onClick={() => Router.push({ pathname: menuItem.link })}
           >
             <Box
               height={"10"}
               width={"10"}
-              padding="1vh"
               backgroundColor="tyto_teal"
               borderRadius={"full"}
-            > <Image
-                src={menuItem.icon} />
-            </Box>
+            />
             <Text
               fontSize={"sm"}
               _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}
@@ -97,12 +85,14 @@ const DashboardNavigationBar = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
         router.push("/sign-in");
       }
       getloadData(checkSession);
       setLoading(false);
+    }, [2000])
   }, []);
 
   async function getloadData(props) {
@@ -127,16 +117,12 @@ const DashboardNavigationBar = () => {
       <Box height={"2vh"} />
 
       <HStack spacing={"1vw"}>
-      <Box
+        <Box
           height={"14"}
           width={"14"}
           backgroundColor="tyto_teal"
           borderRadius={"full"}
-          padding="1.5vh"
-        ><Image
-            src={"/user.png"}
-            height={"7"}
-            width={"7"} /></Box>
+        />
         <VStack alignItems={"stretch"}>
           <Text fontWeight={"bold"}>{data.fullname ? data.fullname : 'Loading...'}</Text>
           <Text fontSize={"xs"}>Teacher</Text>
@@ -171,12 +157,15 @@ export default function SignIn() {
     onClose: onCloseAlertModal
   } = useDisclosure()
   useEffect(() => {
+
+    setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
         router.push("/sign-in");
       }
       getloadData(checkSession);
       setLoading(false);
+    }, [])
   }, []);
 
   async function getloadData(props) {

@@ -16,7 +16,6 @@ export default async function giveRecitation({
   const logsRef = doc(db, "logs", date.toString());
 
   if (!isEmailExisting) {
-    await deleteDoc(doc(db, "recitation", schedule_id))
     const data = await getDocs(docRef)
     data.forEach(docs => {
         const upDate = doc(db, "recitation", schedule_id, "recitation_data", docs.id)
