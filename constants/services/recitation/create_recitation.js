@@ -3,7 +3,7 @@ import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
 
 export default async function createRecitation({
-  quizName,
+  recitationName,
   roomName,
   room_id,
   teacher_email,
@@ -27,7 +27,7 @@ export default async function createRecitation({
       name: roomName,
       teacher_email:teacher_email,
       student_email:student_email,
-      quiz_name: quizName,
+      quiz_name: recitationName,
       items: items,
       create:date.toString()
     });

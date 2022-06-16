@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 
 export default async function giveRecitation({
@@ -16,6 +16,7 @@ export default async function giveRecitation({
   const logsRef = doc(db, "logs", date.toString());
 
   if (!isEmailExisting) {
+    await deleteDoc(doc(db, "recitation", schedule_id))
     const data = await getDocs(docRef)
     data.forEach(docs => {
         const upDate = doc(db, "recitation", schedule_id, "recitation_data", docs.id)
@@ -26,11 +27,11 @@ export default async function giveRecitation({
       action: "CREATE_QUIZ",
       creator_email: teacher_email,
       timestamp: date.toString(),
-      description: `${teacher_email} created an quiz with a room id of ${room_id}`,
+      description: `${teacher_email} created an recitatiom question with a room id of ${room_id}`,
     });
 
-    return { success: true, message: "Quiz Created Successfully." };
+    return { success: true, message: "Recitation Created Successfully." };
   } else {
-    return { success: false, message: "Quiz Creation Failed." };
+    return { success: false, message: "Recitation Creation Failed." };
   }
 }
