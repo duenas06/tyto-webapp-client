@@ -21,16 +21,23 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
-import React, { useState, useEffect, useContext, } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Calendar from "react-calendar";
 import { Circles } from "react-loader-spinner";
 import UserDataContext from "../../src/context/UserDataContext";
 import "react-calendar/dist/Calendar.css";
 import { db } from "../../firebase";
-import { collection, query, where, getDoc, doc, getDocs } from "@firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDoc,
+  doc,
+  getDocs,
+} from "@firebase/firestore";
 import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import Head from "next/head";
-import CreateExamModal from "../../constants/components/modals/exams/create_exam"
+import CreateExamModal from "../../constants/components/modals/exams/create_exam";
 import giveExam from "../../constants/services/exams/give_exam";
 import removeExam from "../../constants/services/exams/remove_exam";
 import CreateQuizModal from "../../constants/components/modals/quiz/create_quiz";
@@ -59,14 +66,12 @@ const NavBarMenuSection = () => {
             cursor={"pointer"}
             onClick={() => {
               if (menuItem.name === "Sign Out") {
-                Router.push({ pathname: menuItem.link })
-                localStorage.clear()
-              }
-              else {
-                Router.push({ pathname: menuItem.link })
+                Router.push({ pathname: menuItem.link });
+                localStorage.clear();
+              } else {
+                Router.push({ pathname: menuItem.link });
               }
             }}
-
           >
             <Box
               height={"10"}
@@ -74,12 +79,18 @@ const NavBarMenuSection = () => {
               padding="1vh"
               backgroundColor="tyto_teal"
               borderRadius={"full"}
-            > <Image
-                src={menuItem.icon} />
+            >
+              {" "}
+              <Image src={menuItem.icon} />
             </Box>
             <Text
               fontSize={"sm"}
-              _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}
+              _hover={{
+                transitionDuration: ".2s",
+                transform: "scale(1.2)",
+                overflow: "hidden",
+                color: "cyan",
+              }}
               color={currentMenuSelected == index && "tyto_teal"}
             >
               {menuItem.name}
@@ -94,23 +105,22 @@ const DashboardNavigationBar = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-      const checkSession = localStorage.getItem("email");
-      if (!checkSession) {
-        router.push("/sign-in");
-      }
-      getloadData(checkSession);
-      setLoading(false);
+    const checkSession = localStorage.getItem("email");
+    if (!checkSession) {
+      router.push("/sign-in");
+    }
+    getloadData(checkSession);
+    setLoading(false);
   }, []);
 
   async function getloadData(props) {
     setLoading(true);
     if (props) {
       //TEACHER INFORMATION
-      const TEACHER_REF = doc(db,
-        "accounts_teacher", props);
+      const TEACHER_REF = doc(db, "accounts_teacher", props);
 
       const teacher = await getDoc(TEACHER_REF);
-      setData({ ...teacher.data() })
+      setData({ ...teacher.data() });
     }
   }
   return (
@@ -124,16 +134,15 @@ const DashboardNavigationBar = () => {
       <Box height={"2vh"} />
 
       <HStack spacing={"1vw"}>
-      <Box
+        <Box
           height={"14"}
           width={"14"}
           backgroundColor="tyto_teal"
           borderRadius={"full"}
           padding="1.5vh"
-        ><Image
-            src={"/user.png"}
-            height={"7"}
-            width={"7"} /></Box>
+        >
+          <Image src={"/user.png"} height={"7"} width={"7"} />
+        </Box>
         <VStack alignItems={"stretch"}>
           <Text fontWeight={"bold"}>{data.fullname}</Text>
           <Text fontSize={"xs"}>Teacher</Text>
@@ -146,29 +155,28 @@ const DashboardNavigationBar = () => {
       <NavBarMenuSection />
     </VStack>
   );
-}
+};
 
 export default function SignIn() {
   const [value, onChange] = useState(new Date());
   const router = useRouter();
   const userDataContext = useContext(UserDataContext);
   const [data, setData] = useState({});
-  const [quiz, setQuiz] = useState([])
+  const [quiz, setQuiz] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [roomInfo, setRoomInfo] = useState({})
+  const [roomInfo, setRoomInfo] = useState({});
   const [scheduleIDS, setScheduleIDs] = useState([]);
-  const [section, setSection] = useState([])
+  const [section, setSection] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [schedule, setSchedule] = useState([])
-  const cancelRef = React.useRef()
+  const [schedule, setSchedule] = useState([]);
+  const cancelRef = React.useRef();
   const toast = useToast();
   const {
     isOpen: isOpenAlertModal,
     onOpen: onOpenAlertModal,
-    onClose: onCloseAlertModal
-  } = useDisclosure()
+    onClose: onCloseAlertModal,
+  } = useDisclosure();
   useEffect(() => {
-
     setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
@@ -176,109 +184,125 @@ export default function SignIn() {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [])
+    }, []);
   }, []);
 
   async function getloadData(props) {
     setLoading(true);
-    schedules = []
+    schedules = [];
     if (props) {
       //TEACHER INFORMATION
-      const TEACHER_REF = doc(db,
-        "accounts_teacher", props);
+      const TEACHER_REF = doc(db, "accounts_teacher", props);
 
       const teacher = await getDoc(TEACHER_REF);
-      setData({ ...teacher.data() })
+      setData({ ...teacher.data() });
 
       //quizs
-      var quizes = []
+      var quizes = [];
       //GRADE SEVEN
-      const GRADE_SEVEN_QUIZ = query(collection(db,
-        "quiz", "GRADE-SEVEN", "quiz_data"), where("teacher_email", "==", props))
+      const GRADE_SEVEN_QUIZ = query(
+        collection(db, "quiz", "GRADE-SEVEN", "quiz_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GSEVEN_QUIZ_REF = await getDocs(GRADE_SEVEN_QUIZ);
 
       GSEVEN_QUIZ_REF.forEach((doc) => {
-        quizes.push(doc.data())
+        quizes.push(doc.data());
       });
 
-
       //GRADE EIGHT
-      const GRADE_EIGHT_QUIZ = query(collection(db,
-        "quiz", "GRADE-EIGHT", "quiz_data"), where("teacher_email", "==", props))
+      const GRADE_EIGHT_QUIZ = query(
+        collection(db, "quiz", "GRADE-EIGHT", "quiz_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GEIGHT_QUIZ_REF = await getDocs(GRADE_EIGHT_QUIZ);
 
       GEIGHT_QUIZ_REF.forEach((doc) => {
-        quizes = quizes.concat(doc.data())
+        quizes = quizes.concat(doc.data());
       });
 
       //GRADE NINE
-      const GRADE_NINE_QUIZ = query(collection(db,
-        "quiz", "GRADE-NINE", "quiz_data"), where("teacher_email", "==", props))
+      const GRADE_NINE_QUIZ = query(
+        collection(db, "quiz", "GRADE-NINE", "quiz_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GNINE_QUIZ_REF = await getDocs(GRADE_NINE_QUIZ);
 
       GNINE_QUIZ_REF.forEach((doc) => {
-        quizes = quizes.concat(doc.data())
+        quizes = quizes.concat(doc.data());
       });
 
       //GRADE TEN
-      const GRADE_TEN_QUIZ = query(collection(db,
-        "quiz", "GRADE-TEN", "quiz_data"), where("teacher_email", "==", props))
+      const GRADE_TEN_QUIZ = query(
+        collection(db, "quiz", "GRADE-TEN", "quiz_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GTEN_QUIZ_REF = await getDocs(GRADE_TEN_QUIZ);
 
       GTEN_QUIZ_REF.forEach((doc) => {
-        quizes = quizes.concat(doc.data())
+        quizes = quizes.concat(doc.data());
       });
-      setQuiz(quiz => [...quiz, quizes])
-
+      setQuiz((quiz) => [...quiz, quizes]);
 
       //TEACHER SCHEDULE
-      var schedules = []
+      var schedules = [];
       //GRADE SEVEN
-      const GRADE_SEVEN = doc(db,
-        "schedules", "GRADE-SEVEN")
+      const GRADE_SEVEN = doc(db, "schedules", "GRADE-SEVEN");
 
       const GSEVEN_REF = await getDoc(GRADE_SEVEN);
 
-      schedules = schedules.concat(GSEVEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GSEVEN_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE EIGHT
-      const GRADE_EIGHT = doc(db,
-        "schedules", "GRADE-EIGHT")
+      const GRADE_EIGHT = doc(db, "schedules", "GRADE-EIGHT");
 
       const GEIGHT_REF = await getDoc(GRADE_EIGHT);
 
-      schedules = schedules.concat(GEIGHT_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GEIGHT_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE NINE
-      const GRADE_NINE = doc(db,
-        "schedules", "GRADE-NINE")
+      const GRADE_NINE = doc(db, "schedules", "GRADE-NINE");
 
       const GNINE_REF = await getDoc(GRADE_NINE);
 
-      schedules = schedules.concat(GNINE_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GNINE_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE TEN
-      const GRADE_TEN = doc(db,
-        "schedules", "GRADE-TEN")
+      const GRADE_TEN = doc(db, "schedules", "GRADE-TEN");
 
       const GTEN_REF = await getDoc(GRADE_TEN);
 
-      schedules = schedules.concat(GTEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
-      setSchedule(schedule => [...schedule, schedules])
+      schedules = schedules.concat(
+        GTEN_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
+      setSchedule((schedule) => [...schedule, schedules]);
       setLoading(false);
-
     }
   }
 
   function getRoomInfo() {
-    var sectionInfo = []
-    schedule[0].map(val => {
-      sectionInfo.push({ room_id: val?.room_id, name: val?.name })
-    })
+    var sectionInfo = [];
+    schedule[0]?.map((val) => {
+      sectionInfo.push({ room_id: val?.room_id, name: val?.name });
+    });
     return sectionInfo;
   }
 
@@ -354,7 +378,8 @@ export default function SignIn() {
             onClose={onClose}
             roomInfo={section}
             scheduleIDS={scheduleIDS}
-            teacherEmail={data.email} />
+            teacherEmail={data.email}
+          />
           <Divider orientation="vertical" />
 
           <VStack
@@ -377,8 +402,12 @@ export default function SignIn() {
               </VStack>
               <Spacer />
               <VStack alignItems={"stretch"}>
-                <Heading color={"tyto_black"}>{moment().format("dddd")}</Heading>
-                <Text color={"tyto_black"} alignSelf="flex-end">{moment().format("hh:mm A")}</Text>
+                <Heading color={"tyto_black"}>
+                  {moment().format("dddd")}
+                </Heading>
+                <Text color={"tyto_black"} alignSelf="flex-end">
+                  {moment().format("hh:mm A")}
+                </Text>
               </VStack>
             </HStack>
 
@@ -393,13 +422,13 @@ export default function SignIn() {
             >
               {"Available Quizzes"}
             </Text>
-            <Box minH={"100%"} bg={"white"} >
+            <Box minH={"100%"} bg={"white"}>
               <Grid
                 // h='200px'
                 // bg={"blue"}
-                templateRows='repeat(2, 1fr)'
-                templateColumns='repeat(4, 1fr)'
-                gap={4}
+                templateRows="repeat(2, 1fr)"
+                templateColumns="repeat(4, 1fr)"
+                gap={1}
                 borderRadius={"lg"}
               >
                 <Button
@@ -433,19 +462,37 @@ export default function SignIn() {
                     borderRadius={"xl"}
                     justifyContent={"center"}
                     cursor={"hand"}
-
                   >
-                    <Image boxSize="124" src="/createquiz.svg" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }} />
-                    <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD QUIZ</Text>
+                    <Image
+                      boxSize="124"
+                      src="/createquiz.svg"
+                      _hover={{
+                        transitionDuration: ".2s",
+                        transform: "scale(1.2)",
+                        overflow: "hidden",
+                        color: "cyan",
+                      }}
+                    />
+                    <Text
+                      margin="5"
+                      alignSelf="center"
+                      _hover={{
+                        transitionDuration: ".2s",
+                        transform: "scale(1.2)",
+                        overflow: "hidden",
+                        color: "cyan",
+                      }}
+                    >
+                      ADD QUIZ
+                    </Text>
                   </VStack>
                 </Button>
                 {quiz[0]?.map((val, index) => {
-
                   if (val) {
                     return (
                       <VStack
                         height={"20vh"}
-                        maxW={"20vw"}
+                        maxW={"18vw"}
                         flex={1}
                         backgroundColor={"tyto_teal"}
                         paddingX={"1vw"}
@@ -456,7 +503,12 @@ export default function SignIn() {
                         _hover={{ shadow: "lg" }}
                         key={index}
                       >
-                        <Text color="white" fontWeight="bold" fontSize={"xl"} textAlign={"center"}>
+                        <Text
+                          color="white"
+                          fontWeight="bold"
+                          fontSize={"xl"}
+                          textAlign={"center"}
+                        >
                           {val?.quiz_name}
                         </Text>
                         <Text color="white">{val?.name}</Text>
@@ -471,16 +523,20 @@ export default function SignIn() {
                             _active={{ backgroundColor: "#06D7A0" }}
                             onClick={() => {
                               router.push({
-                                pathname: "/classroom/[room_id]/[section]/[quiz]",
+                                pathname:
+                                  "/classroom/[room_id]/[section]/[quiz]",
                                 query: {
                                   room_id: val?.room_id,
                                   section: val?.name,
-                                  quiz: val?.quiz_name
+                                  quiz: val?.quiz_name,
                                 },
-                              })
-                              localStorage.setItem('roomData', JSON.stringify(val))
+                              });
+                              localStorage.setItem(
+                                "roomData",
+                                JSON.stringify(val)
+                              );
                               processGiveQuiz(val);
-                              setRoomInfo(val)
+                              setRoomInfo(val);
                             }}
                           >
                             Give
@@ -494,7 +550,7 @@ export default function SignIn() {
                             _hover={{ backgroundColor: "#FC8181" }}
                             _active={{ backgroundColor: "#F56565" }}
                             onClick={() => {
-                              onOpenAlertModal()
+                              onOpenAlertModal();
                             }}
                           >
                             Remove
@@ -508,35 +564,43 @@ export default function SignIn() {
                         >
                           <AlertDialogOverlay>
                             <AlertDialogContent>
-                              <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                              <AlertDialogHeader
+                                fontSize="lg"
+                                fontWeight="bold"
+                              >
                                 Delete Customer
                               </AlertDialogHeader>
 
                               <AlertDialogBody>
-                                {"Are you sure? You can't undo this action afterwards."}
+                                {
+                                  "Are you sure? You can't undo this action afterwards."
+                                }
                               </AlertDialogBody>
 
                               <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={onCloseAlertModal}>
+                                <Button
+                                  ref={cancelRef}
+                                  onClick={onCloseAlertModal}
+                                >
                                   Cancel
                                 </Button>
                                 <Button
                                   backgroundColor={"#F56565"}
                                   _hover={{ backgroundColor: "#FC8181" }}
                                   onClick={() => {
-                                    processRemoveQuiz(val)
-                                    onCloseAlertModal()
-                                  }} ml={3}>
+                                    processRemoveQuiz(val);
+                                    onCloseAlertModal();
+                                  }}
+                                  ml={3}
+                                >
                                   Delete
                                 </Button>
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialogOverlay>
                         </AlertDialog>
-
                       </VStack>
-
-                    )
+                    );
                   }
                 })}
               </Grid>
