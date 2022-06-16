@@ -1,6 +1,6 @@
 import { Box, HStack, VStack, Text, Heading, Button } from "@chakra-ui/react";
 import Router from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 
 import { Jutsu } from "react-jutsu";
@@ -38,6 +38,9 @@ const IndexNavBar = (props) => {
 
 export default function Home() {
   const [start, setStart] = useState(false);
+  useEffect(()=>{
+    Router.push({pathname:'/sign-in'})
+  },[])
   return (
     <>
       <Head>
