@@ -38,8 +38,8 @@ export default async function createRecitation({
       timestamp: date.toString(),
       description: `${teacher_email} created an recitation with a room id of ${room_id}`,
     });
-    return { success: true, message: "Recitation Created Successfully." };
+    return { success: true, message: "Recitation created successfully." };
   } else {
-    return { success: false, message: "Recitation Creation Failed." };
+    return { success: false, message: "Recitation creation failed." };
   }
 }
