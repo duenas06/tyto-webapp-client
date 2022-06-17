@@ -305,6 +305,7 @@ export default function SignIn() {
 
   const processGiveQuiz = async (props) => {
     const giveQuizs = await giveQuiz({
+      quiz_name:props.quiz_name,
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,

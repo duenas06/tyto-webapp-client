@@ -12,17 +12,22 @@ import {
 import { db } from "../../../firebase";
 
 export default async function giveQuiz({
+  quiz_name,
   room_id,
   teacher_email,
   schedule_id,
   quiz_name,
 }) {
+<<<<<<< HEAD
   const docRef = query(
     collection(db, "quiz", schedule_id, "quiz_data"),
     where("teacher_email", "==", teacher_email),
     where("room_id", "==", room_id),
     where("quiz_name", "==", quiz_name)
   );
+=======
+  const docRef = query(collection(db, "quiz", schedule_id, "quiz_data"), where("teacher_email", "==", teacher_email), where("room_id", "==", room_id), where("quiz_name","==",quiz_name));
+>>>>>>> origin
   const docRefa = doc(db, "quiz", schedule_id, "quiz_data", teacher_email);
   const docData = await getDoc(docRefa);
   const isEmailExisting = docData.exists();

@@ -1,11 +1,5 @@
-import {
-  doc,
-  getDoc,
-  setDoc,
-  addDoc,
-  collection,
-  Firestore,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/firestore";
+import Router from "next/router";
 import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
 
@@ -32,21 +26,29 @@ export default async function createRecitation({
       schedule_id: schedule_id,
       room_id: room_id,
       name: roomName,
+<<<<<<< HEAD
       teacher_email: teacher_email,
       student_email: student_email,
       recitation_name: recitation_name,
+=======
+      teacher_email:teacher_email,
+      student_email:student_email,
+      recitation_name: recitationName,
+>>>>>>> origin
       items: items,
       create: date.toString(),
     });
 
     await setDoc(logsRef, {
-      action: "CREATE_Recitation",
+      action: "CREATE_RECITATION",
       creator_email: teacher_email,
       timestamp: date.toString(),
       description: `${teacher_email} created an recitation with a room id of ${room_id}`,
     });
-    return { success: true, message: "Recitation Created Successfully." };
+
+    Router.reload(window.location.pathname)
+    return { success: true, message: "Recitation created successfully." };
   } else {
-    return { success: false, message: "Recitation Creation Failed." };
+    return { success: false, message: "Recitation creation failed." };
   }
 }

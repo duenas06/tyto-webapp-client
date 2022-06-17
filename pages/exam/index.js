@@ -296,15 +296,23 @@ export default function SignIn() {
   }
 
   function getRoomInfo() {
+<<<<<<< HEAD
     var sectionInfo = [];
     schedule[0].map((val) => {
       sectionInfo.push({ room_id: val?.room_id, name: val?.name });
     });
+=======
+    var sectionInfo = []
+    schedule[0]?.map(val => {
+      sectionInfo.push({ room_id: val?.room_id, name: val?.name })
+    })
+>>>>>>> origin
     return sectionInfo;
   }
 
   const processGiveExam = async (props) => {
     const giveExams = await giveExam({
+      exam_name: props.exam_name,
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,

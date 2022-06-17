@@ -220,6 +220,7 @@ const CreateExamModal = ({
               ) : (
                 <MenuItem
                   key={subindex}
+<<<<<<< HEAD
                   onClick={() => {
                     dispatch({
                       type: "ANSWER",
@@ -227,6 +228,9 @@ const CreateExamModal = ({
                     });
                     buttonTextHandler(props.itemIndex, data);
                   }}
+=======
+                  onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index: (subindex-1) } }); buttonTextHandler(props.itemIndex, data) }}
+>>>>>>> origin
                 >
                   {data}
                 </MenuItem>

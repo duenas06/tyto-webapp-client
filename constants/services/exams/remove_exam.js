@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   doc,
   getDoc,
@@ -10,6 +11,10 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+=======
+import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDocs, deleteDoc } from "firebase/firestore";
+import Router from "next/router";
+>>>>>>> origin
 import { db } from "../../../firebase";
 
 export default async function removeExam({
@@ -45,6 +50,7 @@ export default async function removeExam({
       description: `${teacher_email} removed an exam with a room id of ${room_id}`,
     });
 
+    Router.reload(window.location.pathname)
     return { success: true, message: "Exam Removed Successfully." };
   } else {
     return { success: false, message: "Exam Operation Failed." };
