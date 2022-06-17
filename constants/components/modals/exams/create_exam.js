@@ -213,7 +213,7 @@ const CreateExamModal = ({ isOpen, onClose, scheduleIDS, roomInfo, teacherEmail 
               return subindex === 0 ? <></> :
                 <MenuItem
                   key={subindex}
-                  onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index: props.itemIndex } }); buttonTextHandler(props.itemIndex, data) }}
+                  onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index: (subindex-1) } }); buttonTextHandler(props.itemIndex, data) }}
                 >
                   {data}
                 </MenuItem>

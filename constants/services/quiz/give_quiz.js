@@ -2,11 +2,12 @@ import { doc, getDoc, setDoc, addDoc, collection, updateDoc, query, where, getDo
 import { db } from "../../../firebase";
 
 export default async function giveQuiz({
+  quiz_name,
   room_id,
   teacher_email,
   schedule_id,
 }) {
-  const docRef = query(collection(db, "quiz", schedule_id, "quiz_data"), where("teacher_email", "==", teacher_email), where("room_id", "==", room_id));
+  const docRef = query(collection(db, "quiz", schedule_id, "quiz_data"), where("teacher_email", "==", teacher_email), where("room_id", "==", room_id), where("quiz_name","==",quiz_name));
   const docRefa = doc(db, "quiz", schedule_id, "quiz_data", teacher_email);
   const docData = await getDoc(docRefa);
   const isEmailExisting = docData.exists();

@@ -5,9 +5,10 @@ export default async function giveRecitation({
   room_id,
   teacher_email,
   student_email,
+  recitation_name,
   schedule_id,
 }) {
-  const docRef = query(collection(db, "recitation", schedule_id, "recitation_data"), where("teacher_email", "==", teacher_email), where("room_id", "==", room_id), where("student_email", "==", student_email));
+  const docRef = query(collection(db, "recitation", schedule_id, "recitation_data"), where("teacher_email", "==", teacher_email), where("room_id", "==", room_id), where("student_email", "==", student_email), where("recitation_name", "==", recitation_name));
   const docRefa = doc(db, "recitation", schedule_id, "recitation_data", teacher_email);
   const docData = await getDoc(docRefa);
   const isEmailExisting = docData.exists();

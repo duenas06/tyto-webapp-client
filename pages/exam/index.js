@@ -273,7 +273,7 @@ export default function SignIn() {
 
   function getRoomInfo() {
     var sectionInfo = []
-    schedule[0].map(val => {
+    schedule[0]?.map(val => {
       sectionInfo.push({ room_id: val?.room_id, name: val?.name })
     })
     return sectionInfo;
@@ -281,6 +281,7 @@ export default function SignIn() {
 
   const processGiveExam = async (props) => {
     const giveExams = await giveExam({
+      exam_name: props.exam_name,
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,

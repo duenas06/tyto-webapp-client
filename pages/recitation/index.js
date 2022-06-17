@@ -274,6 +274,7 @@ export default function SignIn() {
   const processGiveRecitation = async (props) => {
     const giveRecits = await giveRecitation({
       room_id: props.room_id,
+      recitation_name: props.recitation_name,
       teacher_email: props.teacher_email,
       student_email: props.student_email,
       schedule_id: props.schedule_id,
