@@ -15,11 +15,13 @@ export default async function unGiveExam({
   room_id,
   teacher_email,
   schedule_id,
+  exam_name,
 }) {
   const docRef = query(
     collection(db, "exams", schedule_id, "exam_data"),
     where("teacher_email", "==", teacher_email),
-    where("room_id", "==", room_id)
+    where("room_id", "==", room_id),
+    where("exam_name", "==", exam_name)
   );
   const docRefa = doc(db, "exams", schedule_id, "exam_data", teacher_email);
   const docData = await getDoc(docRefa);

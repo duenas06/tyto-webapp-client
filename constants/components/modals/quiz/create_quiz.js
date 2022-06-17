@@ -169,7 +169,7 @@ const CreateQuizModal = ({
   const processCreateQuiz = async () => {
     setLoading(true);
     const createQuizs = await createQuiz({
-      quizName: quizName,
+      quiz_name: quizName,
       room_id: roomID,
       roomName: roomName,
       teacher_email: teacherEmail,

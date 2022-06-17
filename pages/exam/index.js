@@ -22,16 +22,23 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
-import React, { useState, useEffect, useContext, } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Calendar from "react-calendar";
 import { Circles } from "react-loader-spinner";
 import UserDataContext from "../../src/context/UserDataContext";
 import "react-calendar/dist/Calendar.css";
 import { db } from "../../firebase";
-import { collection, query, where, getDoc, doc, getDocs } from "@firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDoc,
+  doc,
+  getDocs,
+} from "@firebase/firestore";
 import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import Head from "next/head";
-import CreateExamModal from "../../constants/components/modals/exams/create_exam"
+import CreateExamModal from "../../constants/components/modals/exams/create_exam";
 import giveExam from "../../constants/services/exams/give_exam";
 import removeExam from "../../constants/services/exams/remove_exam";
 const NavBarMenuSection = () => {
@@ -57,14 +64,12 @@ const NavBarMenuSection = () => {
             cursor={"pointer"}
             onClick={() => {
               if (menuItem.name === "Sign Out") {
-                Router.push({ pathname: menuItem.link })
-                localStorage.clear()
-              }
-              else {
-                Router.push({ pathname: menuItem.link })
+                Router.push({ pathname: menuItem.link });
+                localStorage.clear();
+              } else {
+                Router.push({ pathname: menuItem.link });
               }
             }}
-
           >
             <Box
               height={"10"}
@@ -72,12 +77,18 @@ const NavBarMenuSection = () => {
               padding="1vh"
               backgroundColor="tyto_teal"
               borderRadius={"full"}
-            > <Image
-                src={menuItem.icon} />
+            >
+              {" "}
+              <Image src={menuItem.icon} />
             </Box>
             <Text
               fontSize={"sm"}
-              _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}
+              _hover={{
+                transitionDuration: ".2s",
+                transform: "scale(1.2)",
+                overflow: "hidden",
+                color: "cyan",
+              }}
               color={currentMenuSelected == index && "tyto_teal"}
             >
               {menuItem.name}
@@ -92,23 +103,22 @@ const DashboardNavigationBar = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-      const checkSession = localStorage.getItem("email");
-      if (!checkSession) {
-        router.push("/sign-in");
-      }
-      getloadData(checkSession);
-      setLoading(false);
+    const checkSession = localStorage.getItem("email");
+    if (!checkSession) {
+      router.push("/sign-in");
+    }
+    getloadData(checkSession);
+    setLoading(false);
   }, []);
 
   async function getloadData(props) {
     setLoading(true);
     if (props) {
       //TEACHER INFORMATION
-      const TEACHER_REF = doc(db,
-        "accounts_teacher", props);
+      const TEACHER_REF = doc(db, "accounts_teacher", props);
 
       const teacher = await getDoc(TEACHER_REF);
-      setData({ ...teacher.data() })
+      setData({ ...teacher.data() });
     }
   }
   return (
@@ -122,16 +132,15 @@ const DashboardNavigationBar = () => {
       <Box height={"2vh"} />
 
       <HStack spacing={"1vw"}>
-      <Box
+        <Box
           height={"14"}
           width={"14"}
           backgroundColor="tyto_teal"
           borderRadius={"full"}
           padding="1.5vh"
-        ><Image
-            src={"/user.png"}
-            height={"7"}
-            width={"7"} /></Box>
+        >
+          <Image src={"/user.png"} height={"7"} width={"7"} />
+        </Box>
         <VStack alignItems={"stretch"}>
           <Text fontWeight={"bold"}>{data.fullname}</Text>
           <Text fontSize={"xs"}>Teacher</Text>
@@ -144,28 +153,27 @@ const DashboardNavigationBar = () => {
       <NavBarMenuSection />
     </VStack>
   );
-}
+};
 
 export default function SignIn() {
   const [value, onChange] = useState(new Date());
   const router = useRouter();
   const [data, setData] = useState({});
-  const [exam, setExam] = useState([])
+  const [exam, setExam] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [roomInfo, setRoomInfo] = useState({})
+  const [roomInfo, setRoomInfo] = useState({});
   const [scheduleIDS, setScheduleIDs] = useState([]);
-  const [section, setSection] = useState([])
+  const [section, setSection] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [schedule, setSchedule] = useState([])
-  const cancelRef = React.useRef()
+  const [schedule, setSchedule] = useState([]);
+  const cancelRef = React.useRef();
   const toast = useToast();
   const {
     isOpen: isOpenAlertModal,
     onOpen: onOpenAlertModal,
-    onClose: onCloseAlertModal
-  } = useDisclosure()
+    onClose: onCloseAlertModal,
+  } = useDisclosure();
   useEffect(() => {
-
     setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
@@ -173,109 +181,125 @@ export default function SignIn() {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [])
+    }, []);
   }, []);
 
   async function getloadData(props) {
     setLoading(true);
-    schedules = []
+    schedules = [];
     if (props) {
       //TEACHER INFORMATION
-      const TEACHER_REF = doc(db,
-        "accounts_teacher", props);
+      const TEACHER_REF = doc(db, "accounts_teacher", props);
 
       const teacher = await getDoc(TEACHER_REF);
-      setData({ ...teacher.data() })
+      setData({ ...teacher.data() });
 
       //Exams
-      var exams = []
+      var exams = [];
       //GRADE SEVEN
-      const GRADE_SEVEN_EXAM = query(collection(db,
-        "exams", "GRADE-SEVEN", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_SEVEN_EXAM = query(
+        collection(db, "exams", "GRADE-SEVEN", "exam_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GSEVEN_EXAM_REF = await getDocs(GRADE_SEVEN_EXAM);
 
       GSEVEN_EXAM_REF.forEach((doc) => {
-        exams.push(doc.data())
+        exams.push(doc.data());
       });
 
-
       //GRADE EIGHT
-      const GRADE_EIGHT_EXAM = query(collection(db,
-        "exams", "GRADE-EIGHT", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_EIGHT_EXAM = query(
+        collection(db, "exams", "GRADE-EIGHT", "exam_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GEIGHT_EXAM_REF = await getDocs(GRADE_EIGHT_EXAM);
 
       GEIGHT_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+        exams = exams.concat(doc.data());
       });
 
       //GRADE NINE
-      const GRADE_NINE_EXAM = query(collection(db,
-        "exams", "GRADE-NINE", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_NINE_EXAM = query(
+        collection(db, "exams", "GRADE-NINE", "exam_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GNINE_EXAM_REF = await getDocs(GRADE_NINE_EXAM);
 
       GNINE_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+        exams = exams.concat(doc.data());
       });
 
       //GRADE TEN
-      const GRADE_TEN_EXAM = query(collection(db,
-        "exams", "GRADE-TEN", "exam_data"), where("teacher_email", "==", props))
+      const GRADE_TEN_EXAM = query(
+        collection(db, "exams", "GRADE-TEN", "exam_data"),
+        where("teacher_email", "==", props)
+      );
 
       const GTEN_EXAM_REF = await getDocs(GRADE_TEN_EXAM);
 
       GTEN_EXAM_REF.forEach((doc) => {
-        exams = exams.concat(doc.data())
+        exams = exams.concat(doc.data());
       });
-      setExam(exam => [...exam, exams])
-
+      setExam((exam) => [...exam, exams]);
 
       //TEACHER SCHEDULE
-      var schedules = []
+      var schedules = [];
       //GRADE SEVEN
-      const GRADE_SEVEN = doc(db,
-        "schedules", "GRADE-SEVEN")
+      const GRADE_SEVEN = doc(db, "schedules", "GRADE-SEVEN");
 
       const GSEVEN_REF = await getDoc(GRADE_SEVEN);
 
-      schedules = schedules.concat(GSEVEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GSEVEN_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE EIGHT
-      const GRADE_EIGHT = doc(db,
-        "schedules", "GRADE-EIGHT")
+      const GRADE_EIGHT = doc(db, "schedules", "GRADE-EIGHT");
 
       const GEIGHT_REF = await getDoc(GRADE_EIGHT);
 
-      schedules = schedules.concat(GEIGHT_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GEIGHT_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE NINE
-      const GRADE_NINE = doc(db,
-        "schedules", "GRADE-NINE")
+      const GRADE_NINE = doc(db, "schedules", "GRADE-NINE");
 
       const GNINE_REF = await getDoc(GRADE_NINE);
 
-      schedules = schedules.concat(GNINE_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GNINE_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE TEN
-      const GRADE_TEN = doc(db,
-        "schedules", "GRADE-TEN")
+      const GRADE_TEN = doc(db, "schedules", "GRADE-TEN");
 
       const GTEN_REF = await getDoc(GRADE_TEN);
 
-      schedules = schedules.concat(GTEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
-      setSchedule(schedule => [...schedule, schedules])
+      schedules = schedules.concat(
+        GTEN_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
+      setSchedule((schedule) => [...schedule, schedules]);
       setLoading(false);
-
     }
   }
 
   function getRoomInfo() {
-    var sectionInfo = []
-    schedule[0].map(val => {
-      sectionInfo.push({ room_id: val?.room_id, name: val?.name })
-    })
+    var sectionInfo = [];
+    schedule[0].map((val) => {
+      sectionInfo.push({ room_id: val?.room_id, name: val?.name });
+    });
     return sectionInfo;
   }
 
@@ -284,6 +308,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
+      exam_name: props.exam_name,
     });
 
     if (giveExams.success) {
@@ -312,6 +337,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
+      exam_name: props.exam_name,
     });
 
     if (giveExams.success) {
@@ -351,7 +377,8 @@ export default function SignIn() {
             onClose={onClose}
             roomInfo={section}
             scheduleIDS={scheduleIDS}
-            teacherEmail={data.email} />
+            teacherEmail={data.email}
+          />
           <Divider orientation="vertical" />
 
           <VStack
@@ -374,8 +401,12 @@ export default function SignIn() {
               </VStack>
               <Spacer />
               <VStack alignItems={"stretch"}>
-                <Heading color={"tyto_black"}>{moment().format("dddd")}</Heading>
-                <Text color={"tyto_black"} alignSelf="flex-end">{moment().format("hh:mm A")}</Text>
+                <Heading color={"tyto_black"}>
+                  {moment().format("dddd")}
+                </Heading>
+                <Text color={"tyto_black"} alignSelf="flex-end">
+                  {moment().format("hh:mm A")}
+                </Text>
               </VStack>
             </HStack>
 
@@ -390,147 +421,197 @@ export default function SignIn() {
             >
               {"Available Exams"}
             </Text>
-            <Box minH={"100%"} bg={"white"} >
+            <Box minH={"100%"} bg={"white"}>
               <Grid
                 // h='200px'
                 // bg={"blue"}
-                templateRows='repeat(2, 1fr)'
-                templateColumns='repeat(4, 1fr)'
+                templateRows="repeat(2, 1fr)"
+                templateColumns="repeat(4, 1fr)"
                 gap={4}
                 borderRadius={"lg"}
               >
                 <GridItem>
-                <Button
-                  maxW={"20vw"}
-                  height={"fit-content"}
-                  width={"fit-content"}
-                  _hover={{ shadow: "lg" }}
-                  onClick={async () => {
-                    if (data.fullname) {
-                      setScheduleIDs(await getScheduleIDs()),
-                        setSection(getRoomInfo()),
-                        onOpen();
-                    } else {
-                      toast({
-                        title: "Create Exam",
-                        description: "Kindly wait for the data thank you",
-                        status: "error",
-                        duration: 5000,
-                        isClosable: true,
-                      });}}}>
-
-                  <VStack
-                    height={"20vh"}
-                    width={"25.5vh"}
-                    flex={1}
-                    backgroundColor={"tyto_teal"}
-                    paddingX={"1vw"}
-                    paddingY={"2vh"}
-                    borderRadius={"xl"}
-                    justifyContent={"center"}
-                    cursor={"hand"}>
-                    <Image boxSize="124" src="/createquiz.svg" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }} />
-                    <Text margin="5" alignSelf="center" _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}>ADD EXAM</Text>
-                  </VStack>
-                </Button>
+                  <Button
+                    maxW={"20vw"}
+                    height={"fit-content"}
+                    width={"fit-content"}
+                    _hover={{ shadow: "lg" }}
+                    onClick={async () => {
+                      if (data.fullname) {
+                        setScheduleIDs(await getScheduleIDs()),
+                          setSection(getRoomInfo()),
+                          onOpen();
+                      } else {
+                        toast({
+                          title: "Create Exam",
+                          description: "Kindly wait for the data thank you",
+                          status: "error",
+                          duration: 5000,
+                          isClosable: true,
+                        });
+                      }
+                    }}
+                  >
+                    <VStack
+                      height={"20vh"}
+                      width={"25.5vh"}
+                      flex={1}
+                      backgroundColor={"tyto_teal"}
+                      paddingX={"1vw"}
+                      paddingY={"2vh"}
+                      borderRadius={"xl"}
+                      justifyContent={"center"}
+                      cursor={"hand"}
+                    >
+                      <Image
+                        boxSize="124"
+                        src="/createquiz.svg"
+                        _hover={{
+                          transitionDuration: ".2s",
+                          transform: "scale(1.2)",
+                          overflow: "hidden",
+                          color: "cyan",
+                        }}
+                      />
+                      <Text
+                        margin="5"
+                        alignSelf="center"
+                        _hover={{
+                          transitionDuration: ".2s",
+                          transform: "scale(1.2)",
+                          overflow: "hidden",
+                          color: "cyan",
+                        }}
+                      >
+                        ADD EXAM
+                      </Text>
+                    </VStack>
+                  </Button>
                 </GridItem>
                 {exam[0]?.map((val, index) => {
-
                   if (val) {
                     return (
                       <GridItem>
-                      <VStack
-                        height={"20vh"}
-                        maxW={"20vw"}
-                        flex={1}
-                        backgroundColor={"tyto_teal"}
-                        paddingX={"1vw"}
-                        paddingY={"2vh"}
-                        borderRadius={"lg"}
-                        justifyContent={"center"}
-                        cursor={"auto"}
-                        _hover={{ shadow: "lg" }}
-                        key={index}
-                      >
-                        <Text color="white" fontWeight="bold" fontSize={"xl"} textAlign={"center"}>
-                          {val?.exam_name}
-                        </Text>
-                        <Text color="white">{val?.name}</Text>
-                        <Spacer />
-                        <HStack width={"100%"}>
-                          <Button
-                            variant={"solid"}
-                            width={"100%"}
-                            alignSelf="flex-end"
-                            backgroundColor={"#06D7A0"}
-                            _active={{ backgroundColor: "#06D7A0" }}
-                            _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
-                            onClick={() => {
-                              // router.push({
-                              //   pathname: "/classroom/[room_id]/[section]",
-                              //   query: {
-                              //     room_id: val?.room_id,
-                              //     section: val?.name,
-                              //   },
-                              // })
-                              localStorage.setItem('room', JSON.stringify(val))
-                              processGiveExam(val);
-                              setRoomInfo(val)
-                            }}
-                          >
-                            Give
-                          </Button>
-
-                          <Button
-                            variant={"solid"}
-                            width={"100%"}
-                            alignSelf="flex-end"
-                            backgroundColor={"#F56565"}
-                            _hover={{ transitionDuration: ".2s", transform: "scale(1.1)", overflow: "hidden", color: "white" }}
-                            _active={{ backgroundColor: "#F56565" }}
-                            onClick={() => {
-                              onOpenAlertModal()
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        </HStack>
-
-                        <AlertDialog
-                          isOpen={isOpenAlertModal}
-                          leastDestructiveRef={cancelRef}
-                          onClose={onCloseAlertModal}
+                        <VStack
+                          height={"20vh"}
+                          maxW={"20vw"}
+                          flex={1}
+                          backgroundColor={"tyto_teal"}
+                          paddingX={"1vw"}
+                          paddingY={"2vh"}
+                          borderRadius={"lg"}
+                          justifyContent={"center"}
+                          cursor={"auto"}
+                          _hover={{ shadow: "lg" }}
+                          key={index}
                         >
-                          <AlertDialogOverlay>
-                            <AlertDialogContent>
-                              <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                                Delete Customer
-                              </AlertDialogHeader>
+                          <Text
+                            color="white"
+                            fontWeight="bold"
+                            fontSize={"xl"}
+                            textAlign={"center"}
+                          >
+                            {val?.exam_name}
+                          </Text>
+                          <Text color="white">{val?.name}</Text>
+                          <Spacer />
+                          <HStack width={"100%"}>
+                            <Button
+                              variant={"solid"}
+                              width={"100%"}
+                              alignSelf="flex-end"
+                              backgroundColor={"#06D7A0"}
+                              _active={{ backgroundColor: "#06D7A0" }}
+                              _hover={{
+                                transitionDuration: ".2s",
+                                transform: "scale(1.1)",
+                                overflow: "hidden",
+                                color: "white",
+                              }}
+                              onClick={() => {
+                                // router.push({
+                                //   pathname: "/classroom/[room_id]/[section]",
+                                //   query: {
+                                //     room_id: val?.room_id,
+                                //     section: val?.name,
+                                //   },
+                                // })
+                                localStorage.setItem(
+                                  "room",
+                                  JSON.stringify(val)
+                                );
+                                processGiveExam(val);
+                                setRoomInfo(val);
+                              }}
+                            >
+                              Give
+                            </Button>
 
-                              <AlertDialogBody>
-                                {"Are you sure? You can't undo this action afterwards."}
-                              </AlertDialogBody>
+                            <Button
+                              variant={"solid"}
+                              width={"100%"}
+                              alignSelf="flex-end"
+                              backgroundColor={"#F56565"}
+                              _hover={{
+                                transitionDuration: ".2s",
+                                transform: "scale(1.1)",
+                                overflow: "hidden",
+                                color: "white",
+                              }}
+                              _active={{ backgroundColor: "#F56565" }}
+                              onClick={() => {
+                                onOpenAlertModal();
+                              }}
+                            >
+                              Remove
+                            </Button>
+                          </HStack>
 
-                              <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={onCloseAlertModal}>
-                                  Cancel
-                                </Button>
-                                <Button
-                                  backgroundColor={"#F56565"}
-                                  _hover={{ backgroundColor: "#FC8181" }}
-                                  onClick={() => {
-                                    processRemoveExam(val)
-                                    onCloseAlertModal()
-                                  }} ml={3}>
-                                  Delete
-                                </Button>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialogOverlay>
-                        </AlertDialog>
-                      </VStack>
+                          <AlertDialog
+                            isOpen={isOpenAlertModal}
+                            leastDestructiveRef={cancelRef}
+                            onClose={onCloseAlertModal}
+                          >
+                            <AlertDialogOverlay>
+                              <AlertDialogContent>
+                                <AlertDialogHeader
+                                  fontSize="lg"
+                                  fontWeight="bold"
+                                >
+                                  Delete Customer
+                                </AlertDialogHeader>
+
+                                <AlertDialogBody>
+                                  {
+                                    "Are you sure? You can't undo this action afterwards."
+                                  }
+                                </AlertDialogBody>
+
+                                <AlertDialogFooter>
+                                  <Button
+                                    ref={cancelRef}
+                                    onClick={onCloseAlertModal}
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    backgroundColor={"#F56565"}
+                                    _hover={{ backgroundColor: "#FC8181" }}
+                                    onClick={() => {
+                                      processRemoveExam(val);
+                                      onCloseAlertModal();
+                                    }}
+                                    ml={3}
+                                  >
+                                    Delete
+                                  </Button>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialogOverlay>
+                          </AlertDialog>
+                        </VStack>
                       </GridItem>
-                    )
+                    );
                   }
                 })}
               </Grid>

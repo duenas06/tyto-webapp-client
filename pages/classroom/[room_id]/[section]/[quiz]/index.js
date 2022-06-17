@@ -67,16 +67,17 @@ export default function QuizRoom() {
   }, []);
 
   async function processunGiveQuiz() {
-    const giveQuizs = await unGiveQuiz({
+    const unGivequiz = await unGiveQuiz({
       room_id: quiz.room_id,
       teacher_email: quiz.teacher_email,
       schedule_id: quiz.schedule_id,
+      quiz_name: quiz.quiz_name,
     });
 
-    if (giveQuizs.success) {
+    if (unGivequiz.success) {
       toast({
         title: "Quiz Remove Successfully",
-        description: giveQuizs.message,
+        description: unGivequiz.message,
         status: "success",
         duration: 5000,
         isClosable: true,

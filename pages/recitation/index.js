@@ -30,12 +30,6 @@ import { db } from "../../firebase";
 import { collection, query, where, getDoc, doc, getDocs } from "@firebase/firestore";
 import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import Head from "next/head";
-import CreateExamModal from "../../constants/components/modals/exams/create_exam"
-import giveExam from "../../constants/services/exams/give_exam";
-import removeExam from "../../constants/services/exams/remove_exam";
-import CreateQuizModal from "../../constants/components/modals/quiz/create_quiz";
-import giveQuiz from "../../constants/services/quiz/give_quiz";
-import removeQuiz from "../../constants/services/quiz/remove_quiz";
 import CreateRecitationModal from "../../constants/components/modals/recitation/create_recitation";
 import removeRecitation from "../../constants/services/recitation/remove_recitation";
 import giveRecitation from "../../constants/services/recitation/give_recitation";

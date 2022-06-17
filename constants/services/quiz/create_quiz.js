@@ -10,7 +10,7 @@ import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
 
 export default async function createQuiz({
-  quizName,
+  quiz_name,
   roomName,
   room_id,
   teacher_email,
@@ -32,7 +32,7 @@ export default async function createQuiz({
       room_id: room_id,
       name: roomName,
       teacher_email: teacher_email,
-      quiz_name: quizName,
+      quiz_name: quiz_name,
       items: items,
       create: date.toString(),
     });

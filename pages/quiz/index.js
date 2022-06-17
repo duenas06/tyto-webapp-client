@@ -37,9 +37,6 @@ import {
 } from "@firebase/firestore";
 import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import Head from "next/head";
-import CreateExamModal from "../../constants/components/modals/exams/create_exam";
-import giveExam from "../../constants/services/exams/give_exam";
-import removeExam from "../../constants/services/exams/remove_exam";
 import CreateQuizModal from "../../constants/components/modals/quiz/create_quiz";
 import giveQuiz from "../../constants/services/quiz/give_quiz";
 import removeQuiz from "../../constants/services/quiz/remove_quiz";
@@ -311,6 +308,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
+      quiz_name: props.quiz_name,
     });
 
     if (giveQuizs.success) {
@@ -339,6 +337,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
+      quiz_name: props.quiz_name,
     });
 
     if (removeQuizs.success) {

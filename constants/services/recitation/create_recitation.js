@@ -1,15 +1,22 @@
-import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  addDoc,
+  collection,
+  Firestore,
+} from "firebase/firestore";
 import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
 
 export default async function createRecitation({
-  quizName,
+  recitation_name,
   roomName,
   room_id,
   teacher_email,
   student_email,
   schedule_id,
-  items
+  items,
 }) {
   const docRef = collection(db, "recitation", schedule_id, "recitation_data");
   const docRefa = doc(db, "users", schedule_id);
@@ -21,15 +28,15 @@ export default async function createRecitation({
 
   if (!isEmailExisting) {
     await addDoc(docRef, {
-      is_active:false,
+      is_active: false,
       schedule_id: schedule_id,
-      room_id:room_id,
+      room_id: room_id,
       name: roomName,
-      teacher_email:teacher_email,
-      student_email:student_email,
-      quiz_name: quizName,
+      teacher_email: teacher_email,
+      student_email: student_email,
+      recitation_name: recitation_name,
       items: items,
-      create:date.toString()
+      create: date.toString(),
     });
 
     await setDoc(logsRef, {

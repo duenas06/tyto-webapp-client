@@ -78,6 +78,7 @@ export default function ClassRoom() {
       room_id: exam.room_id,
       teacher_email: exam.teacher_email,
       schedule_id: exam.schedule_id,
+      exam_name: exam.exam_name,
     });
 
     if (giveExams.success) {
