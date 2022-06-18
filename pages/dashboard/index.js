@@ -13,7 +13,7 @@ import {
   ScaleFade,
   Divider,
   Spacer,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import moment from "moment";
 import Router, { useRouter } from "next/router";
@@ -21,7 +21,7 @@ import { useState, useEffect, useContext, useRef } from "react";
 import UserDataContext from "../../src/context/UserDataContext";
 import "react-calendar/dist/Calendar.css";
 import { db } from "../../firebase";
-import {getDoc, doc } from "@firebase/firestore";
+import { getDoc, doc } from "@firebase/firestore";
 import Head from "next/head";
 import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import CalendarSchedule from "./calendar";
@@ -48,14 +48,12 @@ const NavBarMenuSection = () => {
             cursor={"pointer"}
             onClick={() => {
               if (menuItem.name === "Sign Out") {
-                Router.push({ pathname: menuItem.link })
-                localStorage.clear()
-              }
-              else {
-                Router.push({ pathname: menuItem.link })
+                Router.push({ pathname: menuItem.link });
+                localStorage.clear();
+              } else {
+                Router.push({ pathname: menuItem.link });
               }
             }}
-
           >
             <Box
               height={"10"}
@@ -63,12 +61,18 @@ const NavBarMenuSection = () => {
               padding="1vh"
               backgroundColor="tyto_teal"
               borderRadius={"full"}
-            > <Image
-                src={menuItem.icon} />
+            >
+              {" "}
+              <Image src={menuItem.icon} />
             </Box>
             <Text
               fontSize={"sm"}
-              _hover={{ transitionDuration: ".2s", transform: "scale(1.2)", overflow: "hidden", color: "cyan" }}
+              _hover={{
+                transitionDuration: ".2s",
+                transform: "scale(1.2)",
+                overflow: "hidden",
+                color: "cyan",
+              }}
               color={currentMenuSelected == index && "tyto_teal"}
             >
               {menuItem.name}
@@ -84,7 +88,6 @@ const DashboardNavigationBar = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-
     setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
@@ -92,17 +95,16 @@ const DashboardNavigationBar = () => {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [])
+    }, []);
   }, []);
   async function getloadData(props) {
     setLoading(true);
     if (props) {
       //TEACHER INFORMATION
-      const TEACHER_REF = doc(db,
-        "accounts_teacher", props);
+      const TEACHER_REF = doc(db, "accounts_teacher", props);
 
       const teacher = await getDoc(TEACHER_REF);
-      setData({ ...teacher.data() })
+      setData({ ...teacher.data() });
     }
   }
   return (
@@ -122,10 +124,9 @@ const DashboardNavigationBar = () => {
           backgroundColor="tyto_teal"
           borderRadius={"full"}
           padding="1.5vh"
-        ><Image
-            src={"/user.png"}
-            height={"7"}
-            width={"7"} /></Box>
+        >
+          <Image src={"/user.png"} height={"7"} width={"7"} />
+        </Box>
         <VStack alignItems={"stretch"}>
           <Text fontWeight={"bold"}>{data.fullname}</Text>
           <Text fontSize={"xs"}>Teacher</Text>
@@ -138,21 +139,19 @@ const DashboardNavigationBar = () => {
       <NavBarMenuSection />
     </VStack>
   );
-}
+};
 
 export default function SignIn() {
   const [value, onChange] = useState(new Date());
   const router = useRouter();
   const userDataContext = useContext(UserDataContext);
   const [data, setData] = useState({});
-  const [schedule, setSchedule] = useState([])
+  const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [roomInfo, setRoomInfo] = useState({})
-  const calendarRef = useRef()
-
+  const [roomInfo, setRoomInfo] = useState({});
+  const calendarRef = useRef();
 
   useEffect(() => {
-
     setTimeout(() => {
       const checkSession = localStorage.getItem("email");
       if (!checkSession) {
@@ -160,56 +159,66 @@ export default function SignIn() {
       }
       getloadData(checkSession);
       setLoading(false);
-    }, [])
+    }, []);
   }, []);
 
   async function getloadData(props) {
     setLoading(true);
-    schedules = []
+    schedules = [];
     if (props) {
       //TEACHER INFORMATION
-      const TEACHER_REF = doc(db,
-        "accounts_teacher", props);
+      const TEACHER_REF = doc(db, "accounts_teacher", props);
 
       const teacher = await getDoc(TEACHER_REF);
-      setData({ ...teacher.data() })
+      setData({ ...teacher.data() });
 
       //TEACHER SCHEDULE
-      var schedules = []
+      var schedules = [];
       //GRADE SEVEN
-      const GRADE_SEVEN = doc(db,
-        "schedules", "GRADE-SEVEN")
+      const GRADE_SEVEN = doc(db, "schedules", "GRADE-SEVEN");
 
       const GSEVEN_REF = await getDoc(GRADE_SEVEN);
 
-      schedules = schedules.concat(GSEVEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GSEVEN_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE EIGHT
-      const GRADE_EIGHT = doc(db,
-        "schedules", "GRADE-EIGHT")
+      const GRADE_EIGHT = doc(db, "schedules", "GRADE-EIGHT");
 
       const GEIGHT_REF = await getDoc(GRADE_EIGHT);
 
-      schedules = schedules.concat(GEIGHT_REF.data().subjects?.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GEIGHT_REF.data().subjects?.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE NINE
-      const GRADE_NINE = doc(db,
-        "schedules", "GRADE-NINE")
+      const GRADE_NINE = doc(db, "schedules", "GRADE-NINE");
 
       const GNINE_REF = await getDoc(GRADE_NINE);
 
-      schedules = schedules.concat(GNINE_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
+      schedules = schedules.concat(
+        GNINE_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
 
       //GRADE TEN
-      const GRADE_TEN = doc(db,
-        "schedules", "GRADE-TEN")
+      const GRADE_TEN = doc(db, "schedules", "GRADE-TEN");
 
       const GTEN_REF = await getDoc(GRADE_TEN);
 
-      schedules = schedules.concat(GTEN_REF.data().subjects.filter(({ teacher_email }) => teacher_email === props))
-      setSchedule(schedule => [...schedule, schedules])
+      schedules = schedules.concat(
+        GTEN_REF.data().subjects.filter(
+          ({ teacher_email }) => teacher_email === props
+        )
+      );
+      setSchedule((schedule) => [...schedule, schedules]);
       setLoading(false);
-
     }
   }
 
@@ -245,14 +254,18 @@ export default function SignIn() {
               </VStack>
               <Spacer />
               <VStack alignItems={"stretch"}>
-                <Heading color={"tyto_black"}>{moment().format("dddd")}</Heading>
-                <Text color={"tyto_black"} alignSelf="flex-end">{moment().format("hh:mm A")}</Text>
+                <Heading color={"tyto_black"}>
+                  {moment().format("dddd")}
+                </Heading>
+                <Text color={"tyto_black"} alignSelf="flex-end">
+                  {moment().format("hh:mm A")}
+                </Text>
               </VStack>
             </HStack>
 
             <Divider width={"90%"} alignSelf={"center"} />
-            <Box minH={"100%"} bg={"white"} >
-              {schedule.length != 0 && <CalendarSchedule schedule={schedule}/>}
+            <Box minH={"100%"} bg={"white"}>
+              {schedule.length != 0 && <CalendarSchedule schedule={schedule} />}
             </Box>
           </VStack>
         </HStack>
