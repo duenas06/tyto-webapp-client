@@ -25,7 +25,7 @@ export default function ActivityPreviewModal({
     localStorageRoomData,
     pushRouteQuery,
 }) {
-
+    console.log(val)
     function pushRoute(){
         giveActivity(val)
         Router.push({
@@ -38,6 +38,21 @@ export default function ActivityPreviewModal({
         );
     }
 
+    const activityName = [
+        {
+            type:'Exam',
+            title:val?.exam_name
+        },
+        {
+            type:'Quiz',
+            title:val?.quiz_name
+        },
+        {
+            type:'Recitation',
+            title:val?.recitation_name
+        },
+    ]
+
     return (
         <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
@@ -48,7 +63,9 @@ export default function ActivityPreviewModal({
                 <Heading fontSize={'md'}>
                     Name 
                 </Heading>
-                <Text>{val?.exam_name}</Text>
+                {activityName.map(data => {
+                    return data.type === type && <Text>{data.title}</Text>
+                })}
                 <Divider my={'5'}/>
                 <Heading fontSize={'md'}>
                    {`${type} Items`}
