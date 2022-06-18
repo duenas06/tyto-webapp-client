@@ -40,6 +40,7 @@ import Head from "next/head";
 import CreateQuizModal from "../../constants/components/modals/quiz/create_quiz";
 import giveQuiz from "../../constants/services/quiz/give_quiz";
 import removeQuiz from "../../constants/services/quiz/remove_quiz";
+import ActivityPreviewModal from "../../constants/components/reusable/acitivity_preview_modal";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard", icon: "/dashboard.png" },
@@ -165,6 +166,7 @@ export default function SignIn() {
   const [scheduleIDS, setScheduleIDs] = useState([]);
   const [section, setSection] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const activityPreviewModalControls = useDisclosure();
   const [schedule, setSchedule] = useState([]);
   const cancelRef = React.useRef();
   const toast = useToast();
@@ -486,10 +488,25 @@ export default function SignIn() {
                         color: "cyan",
                       }}
                     >
-                      ADD QUIZ
+                      CREATE QUIZ
                     </Text>
                   </VStack>
                 </Button>
+                <ActivityPreviewModal 
+                        type={'Quiz'}
+                        isOpen={activityPreviewModalControls.isOpen} 
+                        onClose={activityPreviewModalControls.onClose}
+                        onOpen={activityPreviewModalControls.onOpen}
+                        giveActivity={processGiveQuiz}
+                        val={roomInfo}
+                        route={'/classroom/[room_id]/[section]/[quiz]'}
+                        localStorageRoomData={'roomData'}
+                        pushRouteQuery={{
+                          room_id: roomInfo.room_id,
+                          section: roomInfo.name,
+                          quiz: roomInfo.quiz_name,
+                        }}
+                />
                 {quiz[0]?.map((val, index) => {
                   if (val) {
                     return (
@@ -535,21 +552,8 @@ export default function SignIn() {
                             _hover={{ backgroundColor: "#06D7A0" }}
                             _active={{ backgroundColor: "#06D7A0" }}
                             onClick={() => {
-                              router.push({
-                                pathname:
-                                  "/classroom/[room_id]/[section]/[quiz]",
-                                query: {
-                                  room_id: val?.room_id,
-                                  section: val?.name,
-                                  quiz: val?.quiz_name,
-                                },
-                              });
-                              localStorage.setItem(
-                                "roomData",
-                                JSON.stringify(val)
-                              );
-                              processGiveQuiz(val);
                               setRoomInfo(val);
+                              activityPreviewModalControls.onOpen();
                             }}
                           >
                             Give
