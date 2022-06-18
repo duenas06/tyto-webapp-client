@@ -52,7 +52,7 @@ export default function RecitationRoom() {
     if (datas?.recitation_name) {
       const docRef = query(
         collection(db, "recitation", datas.schedule_id, "recitation_answer"),
-        where("room_id", "==", datas.room_id),
+        where("room_id", "==", datas.room_id + datas.name),
         where("schedule_id", "==", datas.schedule_id),
         where("student_email", "==", datas.student_email),
         where("recitation_name", "==", datas.recitation_name)

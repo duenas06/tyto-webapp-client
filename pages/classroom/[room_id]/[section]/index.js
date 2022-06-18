@@ -45,12 +45,12 @@ export default function ClassRoom() {
   const toast = useToast();
 
   useEffect(() => {
-    const roomData = localStorage.getItem("roomData");
+    const roomData = localStorage.getItem("room");
     const datas = JSON.parse(roomData);
     if (datas) {
       const docRef = query(
         collection(db, "exams", datas.schedule_id, "exam_answer"),
-        where("room_id", "==", datas.room_id),
+        where("room_id", "==", datas.room_id + datas.name),
         where("schedule_id", "==", datas.schedule_id)
       );
       const unsub = onSnapshot(docRef, (studentInfo) => {

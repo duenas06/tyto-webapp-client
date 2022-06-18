@@ -43,7 +43,7 @@ export default async function createRecitation({
     await addDoc(docRef, {
       is_active: false,
       schedule_id: schedule_id,
-      room_id: room_id,
+      room_id: room_id + roomName,
       name: roomName,
       teacher_email: teacher_email,
       student_email: student_email,

@@ -41,7 +41,7 @@ export default async function createQuiz({
     await addDoc(docRef, {
       is_active: false,
       schedule_id: schedule_id,
-      room_id: room_id,
+      room_id: room_id + roomName,
       name: roomName,
       teacher_email: teacher_email,
       quiz_name: quiz_name,

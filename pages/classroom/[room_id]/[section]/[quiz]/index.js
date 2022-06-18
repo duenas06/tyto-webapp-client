@@ -51,7 +51,7 @@ export default function QuizRoom() {
     if (datas?.quiz_name) {
       const docRef = query(
         collection(db, "quiz", datas.schedule_id, "quiz_answer"),
-        where("room_id", "==", datas.room_id),
+        where("room_id", "==", datas.room_id + datas.name),
         where("schedule_id", "==", datas.schedule_id)
       );
       const unsub = onSnapshot(docRef, (studentInfo) => {

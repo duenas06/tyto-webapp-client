@@ -42,7 +42,7 @@ export default async function createExam({
     await addDoc(docRef, {
       is_active: false,
       schedule_id: schedule_id,
-      room_id: room_id,
+      room_id: room_id + roomName,
       section: section,
       name: roomName,
       teacher_email: teacher_email,
