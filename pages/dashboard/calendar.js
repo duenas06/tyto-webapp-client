@@ -22,10 +22,13 @@ export default class CalendarDemo extends Component {
     const events = this.props.schedule[0].map((val) => {
       const startTime = val?.time.split(" - ")[0];
       var momentObj = moment(startTime, ["h:mm A"]);
+
+      const sectionRoom = val?.room_id.split("_");
+      var section = sectionRoom[0];
       return {
         title: val?.name,
         id: val?.room_id,
-        description: val?.room_id,
+        description: val?.name,
         rrule: {
           freq: "weekly",
           interval: 1,
@@ -62,7 +65,7 @@ export default class CalendarDemo extends Component {
         Router.push({
           pathname: `/classroom/[room_id]/[section]`,
           query: {
-            room_id: e.event.id,
+            room_id: e.event.id + e.event.title,
             section: e.event.title,
           },
         });
