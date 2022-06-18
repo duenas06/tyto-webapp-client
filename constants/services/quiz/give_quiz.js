@@ -44,8 +44,8 @@ export default async function giveQuiz({
       description: `${teacher_email} created an quiz with a room id of ${room_id}`,
     });
 
-    return { success: true, message: "Quiz Created Successfully." };
+    return { success: true, message: "Quiz Given Successfully" };
   } else {
-    return { success: false, message: "Quiz Creation Failed." };
+    return { success: false, message: "Failed To Give Quiz." };
   }
 }

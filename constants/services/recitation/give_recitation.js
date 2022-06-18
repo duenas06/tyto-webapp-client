@@ -59,8 +59,8 @@ export default async function giveRecitation({
       description: `${teacher_email} created an recitatiom question with a room id of ${room_id}`,
     });
 
-    return { success: true, message: "Recitation Created Successfully." };
+    return { success: true, message: "Recitation Given Successfully" };
   } else {
-    return { success: false, message: "Recitation Creation Failed." };
+    return { success: false, message: "Failed To Give Recitation." };
   }
 }

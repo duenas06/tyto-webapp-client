@@ -169,6 +169,7 @@ export default function SignIn() {
   const activityPreviewModalControls = useDisclosure();
   const [schedule, setSchedule] = useState([]);
   const [dataToRemove, setDataToRemove] = useState([]);
+  const [session, setSession] = useState();
   const cancelRef = React.useRef();
   const toast = useToast();
   const {
@@ -182,6 +183,7 @@ export default function SignIn() {
       if (!checkSession) {
         router.push("/sign-in");
       }
+      setSession(checkSession);
       getloadData(checkSession);
       setLoading(false);
     }, []);
@@ -321,7 +323,7 @@ export default function SignIn() {
 
     if (giveExams.success) {
       toast({
-        title: "Exam Given Successfully",
+        title: "All Ready To Go!",
         description: giveExams.message,
         status: "success",
         duration: 5000,
@@ -497,19 +499,19 @@ export default function SignIn() {
                   </Button>
                 </GridItem>
 
-                <ActivityPreviewModal 
-                        type={'Exam'}
-                        isOpen={activityPreviewModalControls.isOpen} 
-                        onClose={activityPreviewModalControls.onClose}
-                        onOpen={activityPreviewModalControls.onOpen}
-                        giveActivity={processGiveExam}
-                        val={roomInfo}
-                        route={'/classroom/[room_id]/[section]'}
-                        localStorageRoomData={'room'}
-                        pushRouteQuery={{
-                          room_id: roomInfo.room_id,
-                          section: roomInfo.name,
-                        }}
+                <ActivityPreviewModal
+                  type={"Exam"}
+                  isOpen={activityPreviewModalControls.isOpen}
+                  onClose={activityPreviewModalControls.onClose}
+                  onOpen={activityPreviewModalControls.onOpen}
+                  giveActivity={processGiveExam}
+                  val={roomInfo}
+                  route={"/classroom/[room_id]/[section]"}
+                  localStorageRoomData={"room"}
+                  pushRouteQuery={{
+                    room_id: roomInfo.room_id,
+                    section: roomInfo.name,
+                  }}
                 />
                 {exam[0]?.map((val, index) => {
                   if (val) {
@@ -564,7 +566,7 @@ export default function SignIn() {
                               }}
                               onClick={() => {
                                 setRoomInfo(val);
-                                activityPreviewModalControls.onOpen()
+                                activityPreviewModalControls.onOpen();
                               }}
                             >
                               Give

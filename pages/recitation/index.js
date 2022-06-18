@@ -310,7 +310,7 @@ export default function SignIn() {
 
     if (giveRecits.success) {
       toast({
-        title: "Recitation Given Successfully",
+        title: "All Ready To Go!",
         description: giveRecits.message,
         status: "success",
         duration: 5000,
@@ -487,21 +487,21 @@ export default function SignIn() {
                       </Text>
                     </VStack>
                   </Button>
-                  <ActivityPreviewModal 
-                          type={'Recitation'}
-                          isOpen={activityPreviewModalControls.isOpen} 
-                          onClose={activityPreviewModalControls.onClose}
-                          onOpen={activityPreviewModalControls.onOpen}
-                          giveActivity={processGiveRecitation}
-                          val={roomInfo}
-                          route={'/classroom/[room_id]/[section]/[quiz]/[recitation]'}
-                          localStorageRoomData={'roomData'}
-                          pushRouteQuery={{
-                            room_id: roomInfo.room_id,
-                            section: roomInfo.name,
-                            quiz: roomInfo.recitation_name,
-                            recitation: roomInfo.recitation_name,
-                          }}
+                  <ActivityPreviewModal
+                    type={"Recitation"}
+                    isOpen={activityPreviewModalControls.isOpen}
+                    onClose={activityPreviewModalControls.onClose}
+                    onOpen={activityPreviewModalControls.onOpen}
+                    giveActivity={processGiveRecitation}
+                    val={roomInfo}
+                    route={"/classroom/[room_id]/[section]/[quiz]/[recitation]"}
+                    localStorageRoomData={"roomData"}
+                    pushRouteQuery={{
+                      room_id: roomInfo.room_id,
+                      section: roomInfo.name,
+                      quiz: roomInfo.recitation_name,
+                      recitation: roomInfo.recitation_name,
+                    }}
                   />
                   {recitation[0]?.map((val, index) => {
                     if (val) {
@@ -549,7 +549,7 @@ export default function SignIn() {
                               _active={{ backgroundColor: "#06D7A0" }}
                               onClick={() => {
                                 setRoomInfo(val);
-                                activityPreviewModalControls.onOpen()
+                                activityPreviewModalControls.onOpen();
                               }}
                             >
                               Give

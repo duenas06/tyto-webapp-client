@@ -44,8 +44,8 @@ export default async function giveExam({
       description: `${teacher_email} created an exam with a room id of ${room_id}`,
     });
 
-    return { success: true, message: "Exam Created Successfully." };
+    return { success: true, message: "Exam Given Successfully" };
   } else {
-    return { success: false, message: "Exam Creation Failed." };
+    return { success: false, message: "Failed To Give Exam." };
   }
 }

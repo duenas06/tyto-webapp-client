@@ -319,7 +319,7 @@ export default function SignIn() {
 
     if (giveQuizs.success) {
       toast({
-        title: "Quiz Given Successfully",
+        title: "All Ready To Go!",
         description: giveQuizs.message,
         status: "success",
         duration: 5000,
@@ -492,20 +492,20 @@ export default function SignIn() {
                     </Text>
                   </VStack>
                 </Button>
-                <ActivityPreviewModal 
-                        type={'Quiz'}
-                        isOpen={activityPreviewModalControls.isOpen} 
-                        onClose={activityPreviewModalControls.onClose}
-                        onOpen={activityPreviewModalControls.onOpen}
-                        giveActivity={processGiveQuiz}
-                        val={roomInfo}
-                        route={'/classroom/[room_id]/[section]/[quiz]'}
-                        localStorageRoomData={'roomData'}
-                        pushRouteQuery={{
-                          room_id: roomInfo.room_id,
-                          section: roomInfo.name,
-                          quiz: roomInfo.quiz_name,
-                        }}
+                <ActivityPreviewModal
+                  type={"Quiz"}
+                  isOpen={activityPreviewModalControls.isOpen}
+                  onClose={activityPreviewModalControls.onClose}
+                  onOpen={activityPreviewModalControls.onOpen}
+                  giveActivity={processGiveQuiz}
+                  val={roomInfo}
+                  route={"/classroom/[room_id]/[section]/[quiz]"}
+                  localStorageRoomData={"roomData"}
+                  pushRouteQuery={{
+                    room_id: roomInfo.room_id,
+                    section: roomInfo.name,
+                    quiz: roomInfo.quiz_name,
+                  }}
                 />
                 {quiz[0]?.map((val, index) => {
                   if (val) {
