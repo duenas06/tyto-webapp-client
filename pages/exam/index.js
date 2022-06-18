@@ -41,6 +41,7 @@ import Head from "next/head";
 import CreateExamModal from "../../constants/components/modals/exams/create_exam";
 import giveExam from "../../constants/services/exams/give_exam";
 import removeExam from "../../constants/services/exams/remove_exam";
+import ActivityPreviewModal from "../../constants/components/reusable/acitivity_preview_modal";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard", icon: "/dashboard.png" },
@@ -165,6 +166,7 @@ export default function SignIn() {
   const [scheduleIDS, setScheduleIDs] = useState([]);
   const [section, setSection] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const activityPreviewModalControls = useDisclosure();
   const [schedule, setSchedule] = useState([]);
   const [dataToRemove, setDataToRemove] = useState([]);
   const cancelRef = React.useRef();
@@ -489,11 +491,26 @@ export default function SignIn() {
                           color: "cyan",
                         }}
                       >
-                        ADD EXAM
+                        CREATE EXAM
                       </Text>
                     </VStack>
                   </Button>
                 </GridItem>
+
+                <ActivityPreviewModal 
+                        type={'Exam'}
+                        isOpen={activityPreviewModalControls.isOpen} 
+                        onClose={activityPreviewModalControls.onClose}
+                        onOpen={activityPreviewModalControls.onOpen}
+                        giveActivity={processGiveExam}
+                        val={roomInfo}
+                        route={'/classroom/[room_id]/[section]'}
+                        localStorageRoomData={'room'}
+                        pushRouteQuery={{
+                          room_id: roomInfo.room_id,
+                          section: roomInfo.name,
+                        }}
+                />
                 {exam[0]?.map((val, index) => {
                   if (val) {
                     return (
@@ -546,19 +563,8 @@ export default function SignIn() {
                                 color: "white",
                               }}
                               onClick={() => {
-                                router.push({
-                                  pathname: "/classroom/[room_id]/[section]",
-                                  query: {
-                                    room_id: val?.room_id,
-                                    section: val?.name,
-                                  },
-                                });
-                                localStorage.setItem(
-                                  "room",
-                                  JSON.stringify(val)
-                                );
-                                processGiveExam(val);
                                 setRoomInfo(val);
+                                activityPreviewModalControls.onOpen()
                               }}
                             >
                               Give

@@ -478,12 +478,6 @@ const CreateRecitationModal = ({
           >
             Close
           </Button>
-          <Button colorScheme="green" mr={3} onClick={addFields}>
-            Add Question
-          </Button>
-          <Button colorScheme="green" mr={3} onClick={removeFields}>
-            Remove Question
-          </Button>
           <Button
             isDisabled={loading}
             colorScheme="green"

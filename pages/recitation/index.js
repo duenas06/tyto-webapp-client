@@ -40,6 +40,7 @@ import Head from "next/head";
 import CreateRecitationModal from "../../constants/components/modals/recitation/create_recitation";
 import removeRecitation from "../../constants/services/recitation/remove_recitation";
 import giveRecitation from "../../constants/services/recitation/give_recitation";
+import ActivityPreviewModal from "../../constants/components/reusable/acitivity_preview_modal";
 const NavBarMenuSection = () => {
   const menuItems = [
     { name: "Dashboard", link: "/dashboard" },
@@ -155,6 +156,7 @@ export default function SignIn() {
   const [scheduleIDS, setScheduleIDs] = useState([]);
   const [section, setSection] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const activityPreviewModalControls = useDisclosure();
   const [schedule, setSchedule] = useState([]);
   const cancelRef = React.useRef();
   const toast = useToast();
@@ -287,7 +289,7 @@ export default function SignIn() {
 
   function getRoomInfo() {
     var sectionInfo = [];
-    schedule[0].map((val) => {
+    schedule[0]?.map((val) => {
       sectionInfo.push({
         room_id: val?.room_id,
         name: val?.name,
@@ -481,10 +483,26 @@ export default function SignIn() {
                           color: "cyan",
                         }}
                       >
-                        ADD QUIZ
+                        CREATE RECITATION
                       </Text>
                     </VStack>
                   </Button>
+                  <ActivityPreviewModal 
+                          type={'Recitation'}
+                          isOpen={activityPreviewModalControls.isOpen} 
+                          onClose={activityPreviewModalControls.onClose}
+                          onOpen={activityPreviewModalControls.onOpen}
+                          giveActivity={processGiveRecitation}
+                          val={roomInfo}
+                          route={'/classroom/[room_id]/[section]/[quiz]/[recitation]'}
+                          localStorageRoomData={'roomData'}
+                          pushRouteQuery={{
+                            room_id: roomInfo.room_id,
+                            section: roomInfo.name,
+                            quiz: roomInfo.recitation_name,
+                            recitation: roomInfo.recitation_name,
+                          }}
+                  />
                   {recitation[0]?.map((val, index) => {
                     if (val) {
                       return (
@@ -530,22 +548,8 @@ export default function SignIn() {
                               _hover={{ backgroundColor: "#06D7A0" }}
                               _active={{ backgroundColor: "#06D7A0" }}
                               onClick={() => {
-                                router.push({
-                                  pathname:
-                                    "/classroom/[room_id]/[section]/[quiz]/[recitation]",
-                                  query: {
-                                    room_id: val?.room_id,
-                                    section: val?.name,
-                                    quiz: val?.recitation_name,
-                                    recitation: val?.recitation_name,
-                                  },
-                                });
-                                localStorage.setItem(
-                                  "roomData",
-                                  JSON.stringify(val)
-                                );
-                                processGiveRecitation(val);
                                 setRoomInfo(val);
+                                activityPreviewModalControls.onOpen()
                               }}
                             >
                               Give
