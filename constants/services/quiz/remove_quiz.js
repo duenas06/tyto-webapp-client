@@ -17,13 +17,13 @@ export default async function removeQuiz({
   room_id,
   teacher_email,
   schedule_id,
-  quiz_name,
+  quiz_id,
 }) {
   const docRef = query(
     collection(db, "quiz", schedule_id, "quiz_data"),
     where("teacher_email", "==", teacher_email),
     where("room_id", "==", room_id),
-    where("quiz_name", "==", quiz_name)
+    where("quiz_id", "==", quiz_id)
   );
   const docRefa = doc(db, "users", schedule_id);
   const docData = await getDoc(docRefa);

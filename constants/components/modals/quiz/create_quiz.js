@@ -32,6 +32,7 @@ const CreateQuizModal = ({
   const [scheduleID, setScheduleID] = useState("");
   const [roomID, setRoomID] = useState("");
   const [roomName, setroomName] = useState("");
+  const [section, setSection] = useState("");
   const [loading, setLoading] = useState(false);
   const [room, setRoom] = useState("");
   const [action, setAction] = useState(["Select Answer"]);
@@ -174,6 +175,7 @@ const CreateQuizModal = ({
       roomName: roomName,
       teacher_email: teacherEmail,
       schedule_id: scheduleID,
+      section: section,
       items: formFields,
     });
 
@@ -248,6 +250,7 @@ const CreateQuizModal = ({
         setScheduleID("");
         setRoomID("");
         setFormFields([1]);
+        setSection("");
       }}
     >
       <ModalOverlay />
@@ -304,6 +307,7 @@ const CreateQuizModal = ({
                             setRoomID(data.room_id),
                               setRoom(room),
                               setroomName(data.name);
+                            setSection(data.section);
                           }}
                         >
                           {room}
@@ -399,7 +403,18 @@ const CreateQuizModal = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              onClose();
+              setRoomID("");
+              setroomName("");
+              setScheduleID("");
+              setRoomID("");
+              setFormFields([1]);
+              setSection("");
+            }}
+          >
             Close
           </Button>
           <Button colorScheme="green" mr={3} onClick={addFields}>

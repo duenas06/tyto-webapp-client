@@ -45,6 +45,7 @@ const CreateRecitationModal = ({
   const [studentEmail, setStudentEmail] = useState("");
   const [studentEmails, setStudentEmails] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [section, setSection] = useState("");
   const [room, setRoom] = useState("");
   let sched = "";
   let studentEmailss = [];
@@ -189,6 +190,7 @@ const CreateRecitationModal = ({
       teacher_email: teacherEmail,
       student_email: studentEmail,
       schedule_id: scheduleID,
+      section: section,
       items: formFields,
     });
 
@@ -276,6 +278,7 @@ const CreateRecitationModal = ({
         setRoomID("");
         setroomName("");
         setScheduleID("");
+        setSection("");
         setRoomID("");
         setFormFields([1]);
       }}
@@ -365,6 +368,7 @@ const CreateRecitationModal = ({
                             setRoomID(data.room_id),
                               setRoom(room),
                               setroomName(data.name);
+                            setSection(data.section);
                           }}
                         >
                           {room}
@@ -460,7 +464,18 @@ const CreateRecitationModal = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              onClose();
+              setRoomID("");
+              setroomName("");
+              setScheduleID("");
+              setSection("");
+              setRoomID("");
+              setFormFields([1]);
+            }}
+          >
             Close
           </Button>
           <Button colorScheme="green" mr={3} onClick={addFields}>

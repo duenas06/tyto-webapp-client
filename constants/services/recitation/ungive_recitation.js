@@ -16,12 +16,14 @@ export default async function unGiveRecitation({
   teacher_email,
   student_email,
   schedule_id,
+  recitation_id,
 }) {
   const docRef = query(
     collection(db, "recitation", schedule_id, "recitation_data"),
     where("teacher_email", "==", teacher_email),
     where("room_id", "==", room_id),
-    where("student_email", "==", student_email)
+    where("student_email", "==", student_email),
+    where("recitation_id", "==", recitation_id)
   );
   const docRefa = doc(
     db,

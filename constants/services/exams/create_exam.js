@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   doc,
   getDoc,
@@ -7,12 +6,20 @@ import {
   collection,
   Firestore,
 } from "firebase/firestore";
-=======
-import { doc, getDoc, setDoc, addDoc, collection, Firestore } from "firebase/firestore";
 import Router from "next/router";
->>>>>>> origin
 import { db } from "../../../firebase";
 import SignIn from "../../../pages/exam";
+
+function makeid(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 export default async function createExam({
   exam_name,
@@ -21,6 +28,7 @@ export default async function createExam({
   teacher_email,
   schedule_id,
   items,
+  section,
 }) {
   const docRef = collection(db, "exams", schedule_id, "exam_data");
   const docRefa = doc(db, "users", schedule_id);
@@ -35,11 +43,13 @@ export default async function createExam({
       is_active: false,
       schedule_id: schedule_id,
       room_id: room_id,
+      section: section,
       name: roomName,
       teacher_email: teacher_email,
       exam_name: exam_name,
       items: items,
       create: date.toString(),
+      exam_id: makeid(10),
     });
 
     await setDoc(logsRef, {
@@ -48,7 +58,7 @@ export default async function createExam({
       timestamp: date.toString(),
       description: `${teacher_email} created an exam with a room id of ${room_id}`,
     });
-    Router.reload(window.location.pathname)
+    Router.reload(window.location.pathname);
     return { success: true, message: "Exam Created Successfully." };
   } else {
     return { success: false, message: "Exam Creation Failed." };

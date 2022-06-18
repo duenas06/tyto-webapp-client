@@ -298,18 +298,21 @@ export default function SignIn() {
   function getRoomInfo() {
     var sectionInfo = [];
     schedule[0]?.map((val) => {
-      sectionInfo.push({ room_id: val?.room_id, name: val?.name });
+      sectionInfo.push({
+        room_id: val?.room_id,
+        name: val?.name,
+        section: val?.section,
+      });
     });
     return sectionInfo;
   }
 
   const processGiveQuiz = async (props) => {
     const giveQuizs = await giveQuiz({
-      quiz_name:props.quiz_name,
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
-      quiz_name: props.quiz_name,
+      quiz_id: props.quiz_id,
     });
 
     if (giveQuizs.success) {
@@ -338,7 +341,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
-      quiz_name: props.quiz_name,
+      quiz_id: props.quiz_id,
     });
 
     if (removeQuizs.success) {
@@ -511,7 +514,17 @@ export default function SignIn() {
                         >
                           {val?.quiz_name}
                         </Text>
-                        <Text color="white">{val?.name}</Text>
+                        <HStack spacing={6}>
+                          <Text color="white" fontSize={"md"}>
+                            {val?.schedule_id}
+                          </Text>
+                          <Text color="white" fontSize={"md"}>
+                            {val?.section}
+                          </Text>
+                          <Text color="white" fontSize={"md"}>
+                            {val?.name}
+                          </Text>
+                        </HStack>
                         <Spacer />
                         <HStack width={"100%"}>
                           <Button

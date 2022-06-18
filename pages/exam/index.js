@@ -166,6 +166,7 @@ export default function SignIn() {
   const [section, setSection] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [schedule, setSchedule] = useState([]);
+  const [dataToRemove, setDataToRemove] = useState([]);
   const cancelRef = React.useRef();
   const toast = useToast();
   const {
@@ -296,17 +297,14 @@ export default function SignIn() {
   }
 
   function getRoomInfo() {
-<<<<<<< HEAD
     var sectionInfo = [];
     schedule[0].map((val) => {
-      sectionInfo.push({ room_id: val?.room_id, name: val?.name });
+      sectionInfo.push({
+        room_id: val?.room_id,
+        name: val?.name,
+        section: val?.section,
+      });
     });
-=======
-    var sectionInfo = []
-    schedule[0]?.map(val => {
-      sectionInfo.push({ room_id: val?.room_id, name: val?.name })
-    })
->>>>>>> origin
     return sectionInfo;
   }
 
@@ -316,7 +314,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
-      exam_name: props.exam_name,
+      exam_id: props.exam_id,
     });
 
     if (giveExams.success) {
@@ -345,7 +343,7 @@ export default function SignIn() {
       room_id: props.room_id,
       teacher_email: props.teacher_email,
       schedule_id: props.schedule_id,
-      exam_name: props.exam_name,
+      exam_id: props.exam_id,
     });
 
     if (giveExams.success) {
@@ -499,7 +497,7 @@ export default function SignIn() {
                 {exam[0]?.map((val, index) => {
                   if (val) {
                     return (
-                      <GridItem>
+                      <GridItem key={index}>
                         <VStack
                           height={"20vh"}
                           maxW={"20vw"}
@@ -511,17 +509,28 @@ export default function SignIn() {
                           justifyContent={"center"}
                           cursor={"auto"}
                           _hover={{ shadow: "lg" }}
-                          key={index}
                         >
                           <Text
                             color="white"
                             fontWeight="bold"
-                            fontSize={"xl"}
+                            fontSize={"2xl"}
                             textAlign={"center"}
+                            mb={"15px"}
                           >
                             {val?.exam_name}
                           </Text>
-                          <Text color="white">{val?.name}</Text>
+                          <HStack spacing={6}>
+                            <Text color="white" fontSize={"md"}>
+                              {val?.schedule_id}
+                            </Text>
+                            <Text color="white" fontSize={"md"}>
+                              {val?.section}
+                            </Text>
+                            <Text color="white" fontSize={"md"}>
+                              {val?.name}
+                            </Text>
+                          </HStack>
+
                           <Spacer />
                           <HStack width={"100%"}>
                             <Button
@@ -537,13 +546,13 @@ export default function SignIn() {
                                 color: "white",
                               }}
                               onClick={() => {
-                                // router.push({
-                                //   pathname: "/classroom/[room_id]/[section]",
-                                //   query: {
-                                //     room_id: val?.room_id,
-                                //     section: val?.name,
-                                //   },
-                                // })
+                                router.push({
+                                  pathname: "/classroom/[room_id]/[section]",
+                                  query: {
+                                    room_id: val?.room_id,
+                                    section: val?.name,
+                                  },
+                                });
                                 localStorage.setItem(
                                   "room",
                                   JSON.stringify(val)
@@ -568,61 +577,56 @@ export default function SignIn() {
                               }}
                               _active={{ backgroundColor: "#F56565" }}
                               onClick={() => {
+                                setDataToRemove(val);
                                 onOpenAlertModal();
                               }}
                             >
                               Remove
                             </Button>
                           </HStack>
-
-                          <AlertDialog
-                            isOpen={isOpenAlertModal}
-                            leastDestructiveRef={cancelRef}
-                            onClose={onCloseAlertModal}
-                          >
-                            <AlertDialogOverlay>
-                              <AlertDialogContent>
-                                <AlertDialogHeader
-                                  fontSize="lg"
-                                  fontWeight="bold"
-                                >
-                                  Delete Customer
-                                </AlertDialogHeader>
-
-                                <AlertDialogBody>
-                                  {
-                                    "Are you sure? You can't undo this action afterwards."
-                                  }
-                                </AlertDialogBody>
-
-                                <AlertDialogFooter>
-                                  <Button
-                                    ref={cancelRef}
-                                    onClick={onCloseAlertModal}
-                                  >
-                                    Cancel
-                                  </Button>
-                                  <Button
-                                    backgroundColor={"#F56565"}
-                                    _hover={{ backgroundColor: "#FC8181" }}
-                                    onClick={() => {
-                                      processRemoveExam(val);
-                                      onCloseAlertModal();
-                                    }}
-                                    ml={3}
-                                  >
-                                    Delete
-                                  </Button>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialogOverlay>
-                          </AlertDialog>
                         </VStack>
                       </GridItem>
                     );
                   }
                 })}
               </Grid>
+              <AlertDialog
+                isOpen={isOpenAlertModal}
+                leastDestructiveRef={cancelRef}
+                onClose={() => {
+                  setDataToRemove([]);
+                  onCloseAlertModal;
+                }}
+              >
+                <AlertDialogOverlay>
+                  <AlertDialogContent>
+                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                      Delete Customer
+                    </AlertDialogHeader>
+
+                    <AlertDialogBody>
+                      {"Are you sure? You can't undo this action afterwards."}
+                    </AlertDialogBody>
+
+                    <AlertDialogFooter>
+                      <Button ref={cancelRef} onClick={onCloseAlertModal}>
+                        Cancel
+                      </Button>
+                      <Button
+                        backgroundColor={"#F56565"}
+                        _hover={{ backgroundColor: "#FC8181" }}
+                        onClick={() => {
+                          processRemoveExam(dataToRemove);
+                          onCloseAlertModal();
+                        }}
+                        ml={3}
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialogOverlay>
+              </AlertDialog>
             </Box>
           </VStack>
         </HStack>

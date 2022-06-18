@@ -71,7 +71,7 @@ export default function QuizRoom() {
       room_id: quiz.room_id,
       teacher_email: quiz.teacher_email,
       schedule_id: quiz.schedule_id,
-      quiz_name: quiz.quiz_name,
+      quiz_id: quiz.quiz_id,
     });
 
     if (unGivequiz.success) {

@@ -34,6 +34,7 @@ const CreateExamModal = ({
   const [roomName, setroomName] = useState("");
   const [loading, setLoading] = useState(false);
   const [room, setRoom] = useState("");
+  const [section, setSection] = useState("");
   const [action, setAction] = useState(["Select Answer"]);
   const [page, setpage] = useState(1);
   const [formFields, setFormFields] = useState([
@@ -174,6 +175,7 @@ const CreateExamModal = ({
       roomName: roomName,
       teacher_email: teacherEmail,
       schedule_id: scheduleID,
+      section: section,
       items: formFields,
     });
 
@@ -220,7 +222,6 @@ const CreateExamModal = ({
               ) : (
                 <MenuItem
                   key={subindex}
-<<<<<<< HEAD
                   onClick={() => {
                     dispatch({
                       type: "ANSWER",
@@ -228,9 +229,6 @@ const CreateExamModal = ({
                     });
                     buttonTextHandler(props.itemIndex, data);
                   }}
-=======
-                  onClick={() => { dispatch({ type: 'ANSWER', value: { text: data, index: (subindex-1) } }); buttonTextHandler(props.itemIndex, data) }}
->>>>>>> origin
                 >
                   {data}
                 </MenuItem>
@@ -249,8 +247,8 @@ const CreateExamModal = ({
         onClose();
         setRoomID("");
         setroomName("");
+        setSection("");
         setScheduleID("");
-        setRoomID("");
         setFormFields([1]);
       }}
     >
@@ -308,6 +306,7 @@ const CreateExamModal = ({
                             setRoomID(data.room_id),
                               setRoom(room),
                               setroomName(data.name);
+                            setSection(data.section);
                           }}
                         >
                           {room}
@@ -403,7 +402,18 @@ const CreateExamModal = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              onClose();
+              onClose();
+              setRoomID("");
+              setroomName("");
+              setSection("");
+              setScheduleID("");
+              setFormFields([1]);
+            }}
+          >
             Close
           </Button>
           <Button colorScheme="green" mr={3} onClick={addFields}>

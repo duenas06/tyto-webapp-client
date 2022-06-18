@@ -23,6 +23,7 @@ import "react-calendar/dist/Calendar.css";
 import { db } from "../../firebase";
 import {getDoc, doc } from "@firebase/firestore";
 import Head from "next/head";
+import getScheduleIDs from "../../constants/services/schedules/get_schedule_ids";
 import CalendarSchedule from "./calendar";
 const NavBarMenuSection = () => {
   const menuItems = [

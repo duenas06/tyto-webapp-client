@@ -54,7 +54,8 @@ export default function RecitationRoom() {
         collection(db, "recitation", datas.schedule_id, "recitation_answer"),
         where("room_id", "==", datas.room_id),
         where("schedule_id", "==", datas.schedule_id),
-        where("student_email", "==", datas.student_email)
+        where("student_email", "==", datas.student_email),
+        where("recitation_name", "==", datas.recitation_name)
       );
       const unsub = onSnapshot(docRef, (studentInfo) => {
         const students = [];
@@ -78,6 +79,7 @@ export default function RecitationRoom() {
       teacher_email: quiz.teacher_email,
       student_email: quiz.student_email,
       schedule_id: quiz.schedule_id,
+      recitation_id: quiz.recitation_id,
     });
 
     if (giveRecits.success) {
