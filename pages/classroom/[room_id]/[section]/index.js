@@ -51,7 +51,8 @@ export default function ClassRoom() {
       const docRef = query(
         collection(db, "exams", datas.schedule_id, "exam_answer"),
         where("room_id", "==", datas.room_id),
-        where("schedule_id", "==", datas.schedule_id)
+        where("schedule_id", "==", datas.schedule_id),
+        where("exam_name", "==", datas.exam_name)
       );
       const unsub = onSnapshot(docRef, (studentInfo) => {
         const students = [];
