@@ -40,6 +40,7 @@ const CreateQuizModal = ({
   const [formFields, setFormFields] = useState([
     {
       index: 0,
+      answerIndex: 0,
       question: "",
       answer: "",
       itemA: "",
@@ -51,6 +52,7 @@ const CreateQuizModal = ({
 
   const initialItems = {
     index: 0,
+    answerIndex: 0,
     question: "",
     answer: "",
     itemA: "",
@@ -72,7 +74,7 @@ const CreateQuizModal = ({
         return {
           ...state,
           answer: action.value.text,
-          index: action.value.index,
+          answerIndex: action.value.index,
         };
 
       case "ITEM_A":
@@ -225,7 +227,7 @@ const CreateQuizModal = ({
                   onClick={() => {
                     dispatch({
                       type: "ANSWER",
-                      value: { text: data, index: props.itemIndex },
+                      value: { text: data, index: subindex - 1 },
                     });
                     buttonTextHandler(props.itemIndex, data);
                   }}

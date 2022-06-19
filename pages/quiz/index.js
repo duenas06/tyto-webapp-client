@@ -502,7 +502,7 @@ export default function SignIn() {
                   route={"/classroom/[room_id]/[section]/[quiz]"}
                   localStorageRoomData={"roomData"}
                   pushRouteQuery={{
-                    room_id: roomInfo.room_id + roomInfo.name,
+                    room_id: roomInfo.room_id,
                     section: roomInfo.name,
                     quiz: roomInfo.quiz_name,
                   }}
